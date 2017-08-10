@@ -1,31 +1,36 @@
 {
-  "name": "node-js-getting-started",
-  "version": "0.2.6",
-  "description": "A sample Node.js app using Express 4",
+  "name": "dieta-farma-api",
+  "version": "0.1.0",
+  "description": "Dieta Farma API",
   "engines": {
     "node": "6.11.1"
   },
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "node server.js",
     "test": "node test.js"
   },
   "dependencies": {
-    "ejs": "2.5.6",
     "express": "4.15.2"
   },
   "devDependencies": {
     "request": "^2.81.0",
-    "tape": "^4.7.0"
+    "tape": "^4.7.0",
+    "body-parser": "^1.15.2",
+    "cors": "^2.7.1",
+    "method-override": "^2.3.6",
+    "mongoose": "^4.5.2",
+    "morgan": "^1.7.0"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/heroku/node-js-getting-started"
+    "url": "https://github.com/idgm81/dieta-farma-api.git"
   },
   "keywords": [
     "node",
     "heroku",
     "express"
   ],
+  "author": "Dieta Farma ©",
   "license": "MIT"
 }

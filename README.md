@@ -1,16 +1,16 @@
-# node-js-getting-started
+# dieta-farma-api
 
 A barebones Node.js app using [Express 4](http://expressjs.com/).
 
-This application supports the [Getting Started with Node on Heroku](https://devcenter.heroku.com/articles/getting-started-with-nodejs) article - check it out.
+This application works as backend app for dieta-farma-online app https://github.com/idgm81/dieta-farma-online.git
 
 ## Running Locally
 
 Make sure you have [Node.js](http://nodejs.org/) and the [Heroku CLI](https://cli.heroku.com/) installed.
 
 ```sh
-$ git clone git@github.com:heroku/node-js-getting-started.git # or clone your own fork
-$ cd node-js-getting-started
+$ git clone https://github.com/idgm81/dieta-farma-api.git # or clone your own fork
+$ cd dieta-farma-api
 $ npm install
 $ npm start
 ```
