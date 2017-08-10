@@ -1,8 +1,3 @@
-
-var mongoose = require('mongoose');
-
-var methodOverride = require('method-override');
-
 // BASE SETUP
 // =============================================================================
 
@@ -13,6 +8,7 @@ var cors       = require('cors');
 var app        = express();
 var morgan     = require('morgan');
 var mongoose   = require('mongoose');
+var methodOverride = require('method-override');
 
 // configure app
 app.use(morgan('dev')); // log requests to the console
