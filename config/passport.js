@@ -1,49 +1,50 @@
-// Importing Passport, strategies, and config
-const passport = require('passport');
-const User = require('../models/user');
-const JwtStrategy = require('passport-jwt').Strategy;
-const ExtractJwt = require('passport-jwt').ExtractJwt;
-const LocalStrategy = require('passport-local');
-
-const localOptions = { usernameField: 'email' };
-
-
-// Setting up local login strategy
-const localLogin = new LocalStrategy(localOptions, function(email, password, done) {
-  User.findOne({ email: email }, (err, user) => {
-    if(err) { return done(err); }
-    if(!user) { return done(null, false, { error: 'Your login details could not be verified. Please try again.' }); }
-
-    user.comparePassword(password, (err, isMatch) => {
-      if (err) { return done(err); }
-      if (!isMatch) { return done(null, false, { error: "Your login details could not be verified. Please try again." }); }
-
-      return done(null, user);
-    });
-  });
-});
-
-const secret = process.env.SECRET_KEY || 'mYS3cr3t';
+const passport      = require('passport');
+const JwtStrategy   = require('passport-jwt').Strategy;
+const ExtractJwt    = require('passport-jwt').ExtractJwt;
+const jwToken       = require('jsonwebtoken');
+const User          = require('../models/user');
+const config = {
+  secret: process.env.SECRET_KEY || '7rm$rkc1svg=!ldzg9da*-vo9o9ael(lh2u&3+sb5-ix@31*v#',
+  expirationTime: 60 * 5, // 5 minutes
+  jwtSession: {
+    session: false
+  }
+};
 
 const jwtOptions = {
   // Telling Passport to check authorization headers for JWT
-  jwtFromRequest: ExtractJwt.fromAuthHeader(),
+  jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme('jwt'),
   // Telling Passport where to find the secret
-  secretOrKey: secret
+  secretOrKey: config.secret
 };
 
-// Setting up JWT login strategy
-const jwtLogin = new JwtStrategy(jwtOptions, (payload, done) => {
-  User.findById(payload._id, (err, user) => {
-    if (err) { return done(err, false); }
+module.exports = function() {
+  var strategy = new JwtStrategy(jwtOptions, function(payload, done) {
+    User.findOne({ email: payload.email }, (err, user) => {
+      if (err) { return done(err, false); }
 
-    if (user) {
-      done(null, user);
-    } else {
-      done(null, false);
-    }
+      if (user) {
+        done(null, user);
+      } else {
+        done(null, false);
+      }
+    });
   });
-});
+  passport.use(strategy);
+  return {
+    generateToken: function(payload) {
+      const token = jwToken.sign(payload, config.secret, { expiresIn: 60 * 5 });
 
-passport.use(jwtLogin);
-passport.use(localLogin);
+      return {
+        token,
+        exp: config.expirationTime
+      }
+    },
+    initialize: function() {
+      return passport.initialize();
+    },
+    authenticate: function() {
+      return passport.authenticate('jwt', config.jwtSession);
+    }
+  };
+};

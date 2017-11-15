@@ -1,98 +1,37 @@
-const jwt = require('jsonwebtoken');
-const crypto = require('crypto');
-const User = require('../models/user');
+const crypto          = require('crypto');
+const nodemailer      = require('nodemailer');
+const User            = require('../models/user');
+const passport        = require('../config/passport')();
+const { smtpConfig }  = require('../config/mail');
 
-const secret = process.env.SECRET_KEY || 'mYS3cr3t';
-
-function generateToken(user) {
-  return jwt.sign(user, secret, {
-    expiresIn: 60 * 15 // 15 minutes
-  });
-}
-
-// Set user info from request
-function setUserInfo(request) {
-  return {
-    _id: request._id,
-    email: request.email,
-    role: request.role,
-  };
-};
-
-//========================================
-// Login Route
-//========================================
-module.exports.login = function(req, res, next) {
-
-  let userInfo = setUserInfo(req.user);
-
-  res.status(200).json({
-    token: `JWT ${generateToken(userInfo)}`,
-    user: userInfo
-  });
-};
-
-//========================================
-// Registration Route
-//========================================
-module.exports.register = function(req, res, next) {
-  // Check for registration errors
+// Login user
+module.exports.userAuth = function(req, res) {
   const email = req.body.email;
-  const firstName = req.body.firstName;
-  const lastName = req.body.lastName;
   const password = req.body.password;
 
-  // Return error if no email provided
-  if (!email) {
-    return res.status(400).send({ error: 'You must enter an email address.'});
-  }
-
-  // Return error if full name not provided
-  if (!firstName || !lastName) {
-    return res.status(400).send({ error: 'You must enter your full name.'});
-  }
-
-  // Return error if no password provided
-  if (!password) {
-    return res.status(400).send({ error: 'You must enter a password.' });
-  }
-
-  User.findOne({ email: email }, (err, existingUser) => {
-      if (err) { return next(err); }
-
-      // If user is not unique, return error
-      if (existingUser) {
-        return res.status(409).send({ error: 'That email address is already in use.' });
-      }
-
-      // If email is unique and password was provided, create account
-      let user = new User({
-        email: email,
-        password: password,
-        profile: { firstName: firstName, lastName: lastName }
+  User.findOne({ email }).then((user) => {
+    if (!user) {
+      res.status(401).json({ message: 'Authentication failed. User not found.' });
+    } else {
+      // check if password matches
+      user.comparePassword(password, function (err, isMatch) {
+        if (isMatch && !err) {
+          // return the information including token as JSON
+          const tokenInfo = passport.generateToken({ email: user.email });
+          const response = {
+            id: user._id,
+            role: user.role,
+            token: tokenInfo.token,
+            exp: tokenInfo.exp,
+          }
+          res.status(200).json(response);
+        } else {
+          res.status(401).json({ message: 'Authentication failed. Wrong password.' });
+        }
       });
-
-      user.save((err, user) => {
-        if (err) { return next(err); }
-
-        // Subscribe member to Mailchimp list
-        // mailchimp.subscribeToNewsletter(user.email);
-
-        // Respond with JWT if user was created
-
-        let userInfo = setUserInfo(user);
-
-        res.status(200).json({
-          token: 'JWT ' + generateToken(userInfo),
-          user: userInfo
-        });
-      });
-  });
-}
-
-//========================================
-// Authorization Middleware
-//========================================
+    }
+  }).catch((err) => { throw err });
+};
 
 // Role authorization check
 module.exports.roleAuthorization = function(requiredRole) {
@@ -106,7 +45,7 @@ module.exports.roleAuthorization = function(requiredRole) {
       }
 
       // If user is found, check role.
-      if (foundUser.role == requiredRole) {
+      if (foundUser.role === requiredRole) {
         return next();
       }
 
@@ -116,54 +55,55 @@ module.exports.roleAuthorization = function(requiredRole) {
   }
 }
 
-//= =======================================
-// Forgot Password Route
-//= =======================================
-
 module.exports.forgotPassword = function(req, res, next) {
   const email = req.body.email;
 
   User.findOne({ email }, (err, existingUser) => {
     // If user is not found, return error
     if (err || existingUser == null) {
-      res.status(409).json({ error: 'Your request could not be processed as entered. Please try again.' });
+      res.status(409).json({ message: 'No existe ningún usuario con ese email registrado' });
       return next(err);
     }
 
-      // If user is found, generate and save resetToken
+    // If user is found, generate and save resetToken
 
-      // Generate a token with Crypto
+    // Generate a token with Crypto
     crypto.randomBytes(48, (err, buffer) => {
       const resetToken = buffer.toString('hex');
       if (err) { return next(err); }
 
       existingUser.resetPasswordToken = resetToken;
-      existingUser.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+      existingUser.resetPasswordExpires = Date.now() + 60 * 15 * 1000 // 15 minutes
 
       existingUser.save((err) => {
-          // If error in saving token, return it
+        // If error in saving token, return it
         if (err) { return next(err); }
 
-        const message = {
-          subject: 'Reset Password',
-          text: `${'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
-            'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
+        var smtpTransport = nodemailer.createTransport('SMTP', smtpConfig );
+
+        const mailOptions = {
+          to: existingUser.profile.email,
+          from: 'jorgebaztan@dietafarma.es',
+          subject: 'DietaFarma Online: Cambio de contraseña',
+          text: `${'Has recibido este mensaje porque alguien ha solicitado el cambio de contraseña de tu cuenta eb DietaFarma\n\n' +
+            'Por favor, haz click en el siguiente enlace para continuar el proceso:\n\n' +
             'http://'}${req.headers.host}/reset-password/${resetToken}\n\n` +
-            `If you did not request this, please ignore this email and your password will remain unchanged.\n`
+            'Si no has solicitado este cambio, por favor ignora este email y tu contraseña no será modificada.\n'
         };
 
-          // Otherwise, send user email via Mailgun
-        mailgun.sendEmail(existingUser.email, message);
+        smtpTransport.sendMail(mailOptions, function(err) {
+          next(err, 'done');
+        });
 
-        return res.status(200).json({ message: 'Please check your email for the link to reset your password.' });
+        return res.status(200).json({ message: 'Por favor, revisa la bandeja de entrada de tu correo y sigue las instrucciones para resetear tu contraseña' });
       });
     });
   });
 };
 
-//= =======================================
-// Reset Password Route
-//= =======================================
+module.exports.refreshToken =  function(req, res, next) {
+
+};
 
 module.exports.verifyToken = function(req, res, next) {
   User.findOne({ resetPasswordToken: req.params.token, resetPasswordExpires: { $gt: Date.now() } }, (err, resetUser) => {
@@ -172,7 +112,7 @@ module.exports.verifyToken = function(req, res, next) {
       res.status(403).json({ error: 'Your token has expired. Please attempt to reset your password again.' });
     }
 
-      // Otherwise, save new password and clear resetToken from database
+    // Otherwise, save new password and clear resetToken from database
     resetUser.password = req.body.password;
     resetUser.resetPasswordToken = undefined;
     resetUser.resetPasswordExpires = undefined;
@@ -180,7 +120,7 @@ module.exports.verifyToken = function(req, res, next) {
     resetUser.save((err) => {
       if (err) { return next(err); }
 
-        // If password change saved successfully, alert user via email
+      // If password change saved successfully, alert user via email
       const message = {
         subject: 'Password Changed',
         text: 'You are receiving this email because you changed your password. \n\n' +
@@ -188,7 +128,7 @@ module.exports.verifyToken = function(req, res, next) {
       };
 
         // Otherwise, send user email confirmation of password change via Mailgun
-      mailgun.sendEmail(resetUser.email, message);
+      nodemailer.sendEmail(message);
 
       return res.status(200).json({ message: 'Password changed successfully. Please login with your new password.' });
     });
