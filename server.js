@@ -36,7 +36,7 @@ app.use(methodOverride());
 
 // enable cors
 const corsOption = {
-  origin: ['http://localhost:4200', 'http://dieta-farma-online.herokuapp.com'],
+  origin: ['http://localhost:4200', 'https://dieta-farma-online.herokuapp.com'],
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   preflightContinue: true,
   optionsSuccessStatus: 200
