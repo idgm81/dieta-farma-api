@@ -105,6 +105,7 @@ app.use((err, req, res, next) => {
 // START THE SERVER
 // =============================================================================
 app.listen(port, () => {
+  console.log('process env', process.env);
   console.log(`Node app is running on port ${port}`);
 });
 
