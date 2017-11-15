@@ -36,7 +36,7 @@ app.use(methodOverride());
 
 // enable cors
 const corsOption = {
-  origin: ['http://localhost:4200'],
+  origin: ['http://localhost:4200', 'http://dieta-farma-online.herokuapp.com'],
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   preflightContinue: true,
   optionsSuccessStatus: 200
@@ -105,7 +105,6 @@ app.use((err, req, res, next) => {
 // START THE SERVER
 // =============================================================================
 app.listen(port, () => {
-  console.log('process env', process.env);
   console.log(`Node app is running on port ${port}`);
 });
 
