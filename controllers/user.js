@@ -2,17 +2,17 @@ const User = require('../models/user');
 
 module.exports.create = function(req, res, next) {
   // Return error if no email provided
-  if (!req.body.user.email) {
+  if (!req.body.email) {
     return res.status(400).send({ errors: { msg: 'Debes introducir una dirección de email válida' } });
   }
 
   // Return error if no password provided
-  if (!req.body.user.password) {
+  if (!req.body.password) {
     return res.status(400).send({ errors: { msg: 'Debes introducir una contraseña válida' } });
   }
 
 
-  User.findOne({ email: req.body.user.email }).then((user) => {
+  User.findOne({ email: req.body.email }).then((user) => {
     // If user exists, return error
     if (user) {
       return res.status(409).send({ errors: { msg: 'Ya existe un usuario registrado con ese email' } });
@@ -22,7 +22,7 @@ module.exports.create = function(req, res, next) {
     User.find({ role: 'nutritionist'}).then((nutritionist) => { defaultNutritionist = nutritionist._id });
     // If email is unique and password was provided, we create new user
 
-    const newUser = new User(req.body.user);
+    const newUser = new User(req.body);
 
     newUser.set('nutriotionist', defaultNutritionist);
     newUser.save().then((user) => {
@@ -58,7 +58,7 @@ module.exports.getAll = function(req, res, next) {
 };
 
 module.exports.modify = function(req, res, next) {
-  User.update({ _id: req.params.id }, req.body.user, (err, user) => {
+  User.update({ _id: req.params.id }, req.body, (err, user) => {
     if (err) {
       res.status(409).json({ errors: { msg: 'No user could be found for this ID.' } });
       return next(err);
