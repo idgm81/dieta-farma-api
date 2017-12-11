@@ -11,22 +11,17 @@ module.exports.userAuth = function(req, res) {
 
   User.findOne({ email }).then((user) => {
     if (!user) {
-      res.status(401).json({ message: 'Authentication failed. User not found.' });
+      res.status(401).json({ error: { msg: 'Authentication failed. User not found.' } });
     } else {
       // check if password matches
       user.comparePassword(password, function (err, isMatch) {
         if (isMatch && !err) {
           // return the information including token as JSON
-          const tokenInfo = passport.generateToken({ email: user.email });
-          const response = {
-            id: user._id,
-            role: user.role,
-            token: tokenInfo.token,
-            exp: tokenInfo.exp,
-          }
-          res.status(200).json(response);
+          const token = passport.generateToken({ id: user._id});
+
+          res.status(200).json(token);
         } else {
-          res.status(401).json({ message: 'Authentication failed. Wrong password.' });
+          res.status(401).json({ error: { msg: 'Authentication failed. Wrong password.' } });
         }
       });
     }
@@ -40,7 +35,7 @@ module.exports.roleAuthorization = function(requiredRole) {
 
     User.findById(user._id, (err, foundUser) => {
       if (err) {
-        res.status(409).json({ error: 'No user was found.' });
+        res.status(409).json({ error: { msg: 'No user was found.' } });
         return next(err);
       }
 
@@ -49,7 +44,7 @@ module.exports.roleAuthorization = function(requiredRole) {
         return next();
       }
 
-      res.status(401).json({ error: 'You are not authorized to view this content.' });
+      res.status(401).json({ error: { msg: 'You are not authorized to view this content.' } });
       return next('Unauthorized');
     })
   }
@@ -61,7 +56,7 @@ module.exports.forgotPassword = function(req, res, next) {
   User.findOne({ email }, (err, existingUser) => {
     // If user is not found, return error
     if (err || existingUser == null) {
-      res.status(409).json({ message: 'No existe ningún usuario con ese email registrado' });
+      res.status(409).json({ error: { msg: 'No existe ningún usuario con ese email registrado' } });
       return next(err);
     }
 
@@ -82,7 +77,7 @@ module.exports.forgotPassword = function(req, res, next) {
         var smtpTransport = nodemailer.createTransport('SMTP', smtpConfig );
 
         const mailOptions = {
-          to: existingUser.profile.email,
+          to: existingUser.email,
           from: 'jorgebaztan@dietafarma.es',
           subject: 'DietaFarma Online: Cambio de contraseña',
           text: `${'Has recibido este mensaje porque alguien ha solicitado el cambio de contraseña de tu cuenta eb DietaFarma\n\n' +
@@ -95,21 +90,29 @@ module.exports.forgotPassword = function(req, res, next) {
           next(err, 'done');
         });
 
-        return res.status(200).json({ message: 'Por favor, revisa la bandeja de entrada de tu correo y sigue las instrucciones para resetear tu contraseña' });
+        return res.status(200).json({ error: { msg: 'Por favor, revisa la bandeja de entrada de tu correo y sigue las instrucciones para resetear tu contraseña' } });
       });
     });
   });
 };
 
 module.exports.refreshToken =  function(req, res, next) {
+  User.findOne({ email }).then((user) => {
+    if (!user) {
+      res.status(401).json({ errors: { msg: 'Authentication failed. User not found.' } });
+    } else {
+      const tokenInfo = passport.generateToken({ user: user._id, email: user.email });
 
+      res.status(200).json({ token: tokenInfo.token });
+    }
+  });
 };
 
 module.exports.verifyToken = function(req, res, next) {
   User.findOne({ resetPasswordToken: req.params.token, resetPasswordExpires: { $gt: Date.now() } }, (err, resetUser) => {
     // If query returned no results, token expired or was invalid. Return error.
     if (!resetUser) {
-      res.status(403).json({ error: 'Your token has expired. Please attempt to reset your password again.' });
+      res.status(403).json({ error: { msg: 'Your token has expired. Please attempt to reset your password again.' } });
     }
 
     // Otherwise, save new password and clear resetToken from database
@@ -130,7 +133,7 @@ module.exports.verifyToken = function(req, res, next) {
         // Otherwise, send user email confirmation of password change via Mailgun
       nodemailer.sendEmail(message);
 
-      return res.status(200).json({ message: 'Password changed successfully. Please login with your new password.' });
+      return res.status(200).json({ error: { msg: 'Password changed successfully. Please login with your new password.' } });
     });
   });
 };
