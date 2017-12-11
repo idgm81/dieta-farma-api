@@ -20,7 +20,7 @@ const jwtOptions = {
 
 module.exports = function() {
   var strategy = new JwtStrategy(jwtOptions, function(payload, done) {
-    User.findOne({ email: payload.email }, (err, user) => {
+    User.findById(payload.id, (err, user) => {
       if (err) { return done(err, false); }
 
       if (user) {
@@ -36,6 +36,7 @@ module.exports = function() {
       const token = jwToken.sign(payload, config.secret, { expiresIn: 60 * 5 });
 
       return {
+        id: payload.id,
         token,
         exp: config.expirationTime
       }
