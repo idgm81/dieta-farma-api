@@ -1,27 +1,32 @@
-const User      = require('../models/user');
+const User = require('../models/user');
 
-module.exports.register = function(req, res, next) {
+module.exports.create = function(req, res, next) {
   // Return error if no email provided
   if (!req.body.user.email) {
-    return res.status(400).send({ message: 'You must enter an email address'});
+    return res.status(400).send({ errors: { msg: 'Debes introducir una dirección de email válida' } });
   }
 
   // Return error if no password provided
   if (!req.body.user.password) {
-    return res.status(400).send({ message: 'You must enter a valid password' });
+    return res.status(400).send({ errors: { msg: 'Debes introducir una contraseña válida' } });
   }
 
 
   User.findOne({ email: req.body.user.email }).then((user) => {
     // If user exists, return error
     if (user) {
-      return res.status(409).send({ message: 'Ya existe un usuario registrado con ese email' });
+      return res.status(409).send({ errors: { msg: 'Ya existe un usuario registrado con ese email' } });
     }
 
+    let defaultNutritionist = '';
+    User.find({ role: 'nutritionist'}).then((nutritionist) => { defaultNutritionist = nutritionist._id });
     // If email is unique and password was provided, we create new user
+
     const newUser = new User(req.body.user);
+
+    newUser.set('nutriotionist', defaultNutritionist);
     newUser.save().then((user) => {
-      res.status(200).json({ user });
+      res.status(200).json({ user: { _id: user._id }});
     }).catch((err) => {
       return next(err);
     });
@@ -32,7 +37,7 @@ module.exports.get = function(req, res) {
 
   User.findOne({ _id: req.params.id }, (err, user) => {
     if (err) {
-      return res.status(409).json({ error: 'No user could be found for this ID' });
+      return res.status(409).json({ errors: { msg: 'No user could be found for this ID' } });
     }
 
     return res.status(200).json({ user });
@@ -40,9 +45,11 @@ module.exports.get = function(req, res) {
 };
 
 module.exports.getAll = function(req, res, next) {
-  User.find({}, (err, users) => {
+  const role = req.query.role;
+
+  User.find({ role }, (err, users) => {
     if (err) {
-      res.status(409).json({ error: 'No users could be found' });
+      res.status(409).json({ errors: { msg: 'No users could be found' } });
       return next(err);
     }
 
@@ -50,15 +57,26 @@ module.exports.getAll = function(req, res, next) {
   });
 };
 
-module.exports.delete = function(req, res, next) {
-  User.findById(req.params.user_id, (err, user) => {
+module.exports.modify = function(req, res, next) {
+  User.update({ _id: req.params.id }, req.body.user, (err, user) => {
     if (err) {
-      res.status(409).json({ error: 'No user could be found for this ID.' });
+      res.status(409).json({ errors: { msg: 'No user could be found for this ID.' } });
+      return next(err);
+    }
+
+    return res.status(200).json({ user });
+  });
+};
+
+module.exports.delete = function(req, res, next) {
+  User.findById(req.params.id, (err, user) => {
+    if (err) {
+      res.status(409).json({ errors: { msg: 'No user could be found for this ID.' } });
       return next(err);
     }
     user.remove((err) => {
       if (err) {
-        res.status(409).json({ error: 'Can not remove user' });
+        res.status(409).json({ error: { msg: 'Can not remove user' } });
         return next(err);
       }
 
