@@ -18,7 +18,7 @@ module.exports.getUrl = function(req, res) {
 
   const s3 = new aws.S3();
   const fileName = req.body.file;
-  const fileCategory = req.body.category || 'diets';
+  const fileCategory = req.body.category;
   const fileType = req.body.type;
   const s3Params = {
     Bucket: s3Config.s3Options.bucket,
@@ -34,7 +34,7 @@ module.exports.getUrl = function(req, res) {
     }
     const returnData = {
       signedRequest: data,
-      url: `https://s3.${s3Config.s3Options.region}.amazonaws.com/${s3Config.s3Options.bucket}/${fileName}`
+      url: `https://s3.${s3Config.s3Options.region}.amazonaws.com/${s3Config.s3Options.bucket}/${fileCategory}/${fileName}`
     };
     return res.status(200).json(returnData);
   });
