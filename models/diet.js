@@ -6,6 +6,10 @@ const mongoose              = require('mongoose');
 const Schema                = mongoose.Schema;
 
 const DietSchema = new Schema({
+  title: {
+    type: String,
+    required: true
+  },
   client: {
     type: String,
     required: true
@@ -22,7 +26,10 @@ const DietSchema = new Schema({
     type: Date,
     required: true
   },
-  detail: String
+  url: {
+    type: String,
+    required: true
+  }
 },
 {
   timestamps: true
