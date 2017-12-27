@@ -37,6 +37,7 @@ module.exports = function() {
 
       return {
         id: payload.id,
+        role: payload.role,
         token,
         exp: config.expirationTime
       }
