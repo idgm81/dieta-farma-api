@@ -18,7 +18,7 @@ module.exports.getUrl = function(req, res) {
 
   const s3 = new aws.S3();
   const fileName = req.body.file;
-  const fileCategory = req.body.category;
+  const fileCategory = req.body.category || 'diets';
   const fileType = req.body.type;
   const s3Params = {
     Bucket: s3Config.s3Options.bucket,
