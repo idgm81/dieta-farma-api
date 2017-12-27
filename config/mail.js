@@ -4,8 +4,8 @@ module.exports = {
     port: 587,
     secure: false,
     auth: {
-      user: 'username',
-      pass: 'password'
+      user: 'Jorgebaztan@dietafarma.es',
+      pass: 'Bjorge02'
     }
   }
 };

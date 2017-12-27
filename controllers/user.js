@@ -1,4 +1,6 @@
-const User = require('../models/user');
+const User            = require('../models/user');
+const nodemailer      = require('nodemailer');
+const { smtpConfig }  = require('../config/mail');
 
 module.exports.create = function(req, res, next) {
   // Return error if no email provided
@@ -27,6 +29,20 @@ module.exports.create = function(req, res, next) {
     newUser.set('nutriotionist', defaultNutritionist);
     newUser.save().then((user) => {
       res.status(200).json({ user: { _id: user._id }});
+
+      var smtpTransport = nodemailer.createTransport('SMTP', smtpConfig );
+
+      const mailOptions = {
+        to: 'jorgebaztan@dietafarma.es',
+        from: 'Dietafarma App',
+        subject: 'DietaFarma Online: Nuevo usuario',
+        text: `Hola Jorge, tienes un nuevo cliente. Su email es: ${user.email}`
+      };
+
+      smtpTransport.sendMail(mailOptions, function(err) {
+        next(err, 'done');
+      });
+
     }).catch((err) => {
       return next(err);
     });
