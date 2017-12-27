@@ -17,7 +17,7 @@ module.exports.userAuth = function(req, res) {
       user.comparePassword(password, function (err, isMatch) {
         if (isMatch && !err) {
           // return the information including token as JSON
-          const token = passport.generateToken({ id: user._id});
+          const token = passport.generateToken({ id: user._id, role: user.role});
 
           res.status(200).json(token);
         } else {
