@@ -6,16 +6,18 @@ const methodOverride            = require('method-override');
 const cors                      = require('cors');
 const cookieParser              = require('cookie-parser');
 const expressValidation         = require('express-validation');
-const AuthenticationController  = require('./controllers/auth');
-const UserController            = require('./controllers/user');
-const AppointmentController     = require('./controllers/appointment');
-const MessageController         = require('./controllers/message');
-const DietController            = require('./controllers/diet');
 const Promise                   = require('bluebird');
 const mongoose                  = require('mongoose');
 const { port }                  = require('./config/express');
 const database                  = require('./config/database'); // get db config file
 const passport                  = require('./config/passport')();
+const AuthenticationController  = require('./controllers/auth');
+const UserController            = require('./controllers/user');
+const AppointmentController     = require('./controllers/appointment');
+const MessageController         = require('./controllers/message');
+const DietController            = require('./controllers/diet');
+const S3Controller              = require('./controllers/s3');
+
 
 mongoose.Promise = Promise;
 mongoose.connect(database.uri, { useMongoClient: true }); // connect to our database
@@ -60,7 +62,6 @@ apiRoutes.get('/', (req, res) => {
   res.json({ message: 'hooray! welcome to our api!' });
 });
 
-
 // login auth route (POST http://localhost:4500/api/auth/user)
 apiRoutes.post('/auth/user', AuthenticationController.userAuth);
 
@@ -85,7 +86,7 @@ apiRoutes.get('/users/:id', passport.authenticate(), UserController.get);
 // Create new user route (POST http://localhost:4500/api/users)
 apiRoutes.post('/users', UserController.create);
 
-// Modify user route (POST http://localhost:4500/api/users)
+// Modify user route (PUT http://localhost:4500/api/users/:id)
 apiRoutes.put('/users/:id', UserController.modify);
 
 /**
@@ -94,17 +95,17 @@ apiRoutes.put('/users/:id', UserController.modify);
   //= ========================
 */
 
-// Get user appointments route (GET http://localhost:4500/api/appointments/:id)
-apiRoutes.get('/appointments/:id', passport.authenticate(), AppointmentController.get);
+// Get user appointments route (GET http://localhost:4500/api/appointments)
+apiRoutes.get('/appointments', passport.authenticate(), AppointmentController.get);
 
 // Create user appointment route (POST http://localhost:4500/api/appointments)
-apiRoutes.post('/appointments?id=:id', passport.authenticate(), AppointmentController.create);
+apiRoutes.post('/appointments', passport.authenticate(), AppointmentController.create);
 
-// Modify user appointment route (PUT http://localhost:4500/api/appointments/:appointmentId/?id=:id)
-apiRoutes.put('/appointments/:appointmentId/?id=:id', passport.authenticate(), AppointmentController.modify);
+// Modify user appointment route (PUT http://localhost:4500/api/appointments/:id)
+apiRoutes.put('/appointments/:id', passport.authenticate(), AppointmentController.modify);
 
-// Delete user appointment route (PUT http://localhost:4500/api/appointments/:appointmentId)
-apiRoutes.delete('/appointments/:appointmentId', passport.authenticate(), AppointmentController.delete);
+// Delete user appointment route (PUT http://localhost:4500/api/appointments/:id)
+apiRoutes.delete('/appointments/:id', passport.authenticate(), AppointmentController.delete);
 
 /**
   //= ========================
@@ -112,14 +113,14 @@ apiRoutes.delete('/appointments/:appointmentId', passport.authenticate(), Appoin
   //= ========================
 */
 
-// Get user messages route (GET http://localhost:4500/api/messages/:id)
-apiRoutes.get('/messages/:id', passport.authenticate(), MessageController.get);
+// Get user messages route (GET http://localhost:4500/api/messages)
+apiRoutes.get('/messages', passport.authenticate(), MessageController.get);
 
-// Create user message route (POST http://localhost:4500/api/messages?id=:id)
-apiRoutes.post('/messages?id=:id', passport.authenticate(), MessageController.create);
+// Create user message route (POST http://localhost:4500/api/messages)
+apiRoutes.post('/messages', passport.authenticate(), MessageController.create);
 
-// Delete user messages route (DELETE http://localhost:4500/api/messages/:messageId)
-apiRoutes.delete('/messages/:messageId', passport.authenticate(), MessageController.delete);
+// Delete user messages route (DELETE http://localhost:4500/api/messages/:id)
+apiRoutes.delete('/messages/:id', passport.authenticate(), MessageController.delete);
 
 /**
   //= ========================
@@ -127,18 +128,20 @@ apiRoutes.delete('/messages/:messageId', passport.authenticate(), MessageControl
   //= ========================
 */
 
-// Get user diets route (GET http://localhost:4500/api/diets/:id)
-apiRoutes.get('/diets/:id', passport.authenticate(), DietController.get);
+// Get user diets route (GET http://localhost:4500/api/diets)
+apiRoutes.get('/diets', passport.authenticate(), DietController.get);
 
-// Create diet route (POST http://localhost:4500/api/diets?id=:id)
-apiRoutes.post('/diets?id=:id', passport.authenticate(), DietController.create);
+// Create diet route (POST http://localhost:4500/api/diets)
+apiRoutes.post('/diets', passport.authenticate(), DietController.create);
 
-// Modify user diets route (PUT http://localhost:4500/api/diets/:dietId/?id=:id)
-apiRoutes.put('/diets/:dietId/?id=:id', passport.authenticate(), DietController.modify);
+// Modify user diets route (PUT http://localhost:4500/api/diets/:id)
+apiRoutes.put('/diets/:id', passport.authenticate(), DietController.modify);
 
-// Delete user diets route (DELETE http://localhost:4500/api/diets/:dietId)
-apiRoutes.delete('/diets/:dietId', passport.authenticate(), DietController.delete);
+// Delete user diets route (DELETE http://localhost:4500/api/diets/:id)
+apiRoutes.delete('/diets/:id', passport.authenticate(), DietController.delete);
 
+// Upload files to S3
+apiRoutes.post('/signed-request', S3Controller.getUrl);
 
 // View user profile route
 // userRoutes.get('/home', requireAuth, AuthenticationController.roleAuthorization(roles.ROLE_CLIENT), UserController.getUserProfile);
