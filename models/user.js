@@ -127,6 +127,7 @@ const UserSchema = new Schema({
       type: Boolean,
       default: false
     },
+    sportDetail: String,
     exerciseFrecuency: String,
     increaseActivity: {
       type: Boolean,
