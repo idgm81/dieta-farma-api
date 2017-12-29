@@ -18,3 +18,21 @@ module.exports.sendEmail = function(user) {
     console.log('Message sent: %s', info.messageId);
   });
 };
+
+module.exports.sendDietNotification = function(user) {
+  const smtpTransport = nodemailer.createTransport(smtpConfig);
+
+  const mailOptions = {
+    to: user.email,
+    from: 'jorgebaztan@dietafarma.es',
+    subject: 'DietaFarma Online: Alta nuevo usuario',
+    text: `Hola ${user.profile.name},\nya tienes tu dieta disponible en la app.\n\nUn cordial saludo`
+  };
+
+  smtpTransport.sendMail(mailOptions, function(err, info) {
+    if (err) {
+      return console.log(err);
+    }
+    console.log('Message sent: %s', info.messageId);
+  });
+};

@@ -26,7 +26,7 @@ module.exports.create = function(req, res, next) {
 
     newUser.set('nutriotionist', defaultNutritionist);
     newUser.save().then((user) => {
-      MailController.sendEmail(user.email);
+      MailController.sendEmail(user);
       res.status(200).json({ user: { _id: user._id }});
 
     }).catch((err) => {

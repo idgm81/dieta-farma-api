@@ -1,5 +1,6 @@
-const Diet = require('../models/diet');
-const User = require('../models/user');
+const Diet                      = require('../models/diet');
+const User                      = require('../models/user');
+const MailController            = require('./mail');
 
 module.exports.get = function(req, res) {
   Diet.find({ client: req.query.userId }, (err, diets) => {
@@ -15,12 +16,13 @@ module.exports.create = function(req, res, next) {
   const newDiet = new Diet(req.body);
 
   newDiet.save().then((diet) => {
-    User.update({ _id: req.body.client }, { '$push': { 'profile.diets': diet._id } }, (err) => {
+    User.update({ _id: req.body.client }, { '$push': { 'profile.diets': diet._id } }, (err, user) => {
       if (err) {
         res.status(409).json({ errors: { msg: 'Can not assign this diet to client' } });
         return next(err);
       }
 
+      MailController.sendDietNotification(user);
       return res.status(200).json({ diet });
     });
   }).catch((err) => {
