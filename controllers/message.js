@@ -1,4 +1,5 @@
 const Message = require('../models/message');
+const User    = require('../models/user');
 
 module.exports.get = function(req, res) {
   Message.find({$or: [{ client: req.params.id }, { nutritionist: req.params.id }]}, (err, message) => {
@@ -13,9 +14,16 @@ module.exports.get = function(req, res) {
 module.exports.create = function(req, res, next) {
   const newMessage = new Message(req.body);
 
-  newMessage.save().then((message) =>
-    res.status(200).json({ message })
-  ).catch((err) => {
+  newMessage.save().then((message) => {
+    User.update({ _id: req.body.client }, { '$push': { 'profile.messages': message._id } }, (err) => {
+      if (err) {
+        res.status(409).json({ errors: { msg: 'Can not assign this message to client' } });
+        return next(err);
+      }
+
+      return res.status(200).json({ message });
+    });
+  }).catch((err) => {
     return next(err);
   });
 };
