@@ -16,13 +16,14 @@ module.exports.create = function(req, res, next) {
   const newDiet = new Diet(req.body);
 
   newDiet.save().then((diet) => {
-    User.update({ _id: req.body.client }, { '$push': { 'profile.diets': diet._id } }, (err, user) => {
+    User.findByIdAndUpdate(req.body.client, { '$push': { 'profile.diets': diet._id } }, (err, user) => {
       if (err) {
         res.status(409).json({ errors: { msg: 'Can not assign this diet to client' } });
         return next(err);
       }
 
       MailController.sendDietNotification(user);
+
       return res.status(200).json({ diet });
     });
   }).catch((err) => {
@@ -31,7 +32,7 @@ module.exports.create = function(req, res, next) {
 };
 
 module.exports.modify = function(req, res, next) {
-  Diet.update({ _id: req.params.id }, req.body.diet, (err, diet) => {
+  Diet.findByIdAndUpdate(req.params.id, req.body.diet, (err, diet) => {
     if (err) {
       res.status(409).json({ errors: { msg: 'No diet could be found for this ID.' } });
       return next(err);
