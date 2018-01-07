@@ -1,6 +1,13 @@
+require('dotenv').config();
+
 const express                   = require('express');
 const app                       = express();
-const morgan                    = require('morgan');
+const apiRoutes                 = express.Router();
+const port                      = process.env.PORT || 4500;
+
+const helmet                    = require('helmet');
+const logger                    = require('morgan');
+const errorhandler              = require('errorhandler');
 const bodyParser                = require('body-parser');
 const methodOverride            = require('method-override');
 const cors                      = require('cors');
@@ -8,9 +15,8 @@ const cookieParser              = require('cookie-parser');
 const expressValidation         = require('express-validation');
 const Promise                   = require('bluebird');
 const mongoose                  = require('mongoose');
-const { port }                  = require('./config/express');
-const database                  = require('./config/database'); // get db config file
 const passport                  = require('./config/passport')();
+
 const AuthenticationController  = require('./controllers/auth');
 const UserController            = require('./controllers/user');
 const AppointmentController     = require('./controllers/appointment');
@@ -18,21 +24,9 @@ const MessageController         = require('./controllers/message');
 const DietController            = require('./controllers/diet');
 const S3Controller              = require('./controllers/s3');
 
-
-mongoose.Promise = Promise;
-mongoose.connect(database.uri, { useMongoClient: true }); // connect to our database
-mongoose.connection.on('error', () => {
-  throw new Error(`unable to connect to database: ${database.uri}`);
-});
-mongoose.connection.on('connected', () => {
-  console.log(`Connected to database: ${database.uri}`);
-});
-
-
-// configure app
-app.use(morgan('dev')); // log requests to the console
-
 // set up our express application
+
+app.use(helmet());
 app.use(cookieParser()); // read cookies (needed for auth)
 app.use(bodyParser.json()); // get information from html forms
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -45,18 +39,19 @@ const corsOption = {
   preflightContinue: true,
   optionsSuccessStatus: 200
 };
+
 app.use(cors(corsOption));
+
+if (process.env.NODE_ENV === 'development') {
+  app.use(logger('dev'));
+  app.use(errorhandler())
+}
 
 // Use the passport package config in our application
 app.use(passport.initialize());
 
-// Import routes to be served
-// router(app);
-
 // Initializing route groups
-const apiRoutes = express.Router();
-//const userRoutes = express.Router();
-
+// =============================================================================
 // home api route (GET http://localhost:4500)
 apiRoutes.get('/', (req, res) => {
   res.json({ message: 'hooray! welcome to our api!' });
@@ -161,6 +156,16 @@ app.use((err, req, res, next) => {
   }
 });
 
+// set up database
+
+mongoose.Promise = Promise;
+mongoose.connect(process.env.MONGOLAB_URI, { useMongoClient: true }); // connect to our database
+mongoose.connection.on('error', () => {
+  throw new Error(`unable to connect to database: ${process.env.MONGOLAB_URI}`);
+});
+mongoose.connection.on('connected', () => {
+  console.log(`Connected to database: ${process.env.MONGOLAB_URI}`);
+});
 
 // START THE SERVER
 // =============================================================================
