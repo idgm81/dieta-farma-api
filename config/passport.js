@@ -2,9 +2,10 @@ const passport      = require('passport');
 const JwtStrategy   = require('passport-jwt').Strategy;
 const ExtractJwt    = require('passport-jwt').ExtractJwt;
 const jwToken       = require('jsonwebtoken');
+const randtoken     = require('rand-token')
 const User          = require('../models/user');
 const config = {
-  secret: process.env.SECRET_KEY || '7rm$rkc1svg=!ldzg9da*-vo9o9ael(lh2u&3+sb5-ix@31*v#',
+  secret: process.env.SECRET_KEY,
   expirationTime: 60 * 5, // 5 minutes
   jwtSession: {
     session: false
@@ -34,12 +35,14 @@ module.exports = function() {
   return {
     generateToken: function(payload) {
       const token = jwToken.sign(payload, config.secret, { expiresIn: 60 * 5 });
+      const refreshToken = randtoken.uid(256);
 
       return {
         id: payload.id,
         role: payload.role,
         token,
-        exp: config.expirationTime
+        exp: config.expirationTime,
+        refresh_token: refreshToken
       }
     },
     initialize: function() {

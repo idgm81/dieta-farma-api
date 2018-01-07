@@ -1,8 +1,8 @@
 module.exports = {
-  s3Options: {
-    accessKeyId: process.env.S3_KEY,
-    secretAccessKey: process.env.S3_SECRET,
-    region: process.env.S3_REGION,
-    bucket: process.env.S3_BUCKET
-  }
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  },
+  region: process.env.S3_REGION,
+  bucket: process.env.S3_BUCKET
 };
