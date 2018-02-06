@@ -25,7 +25,7 @@ module.exports.sendDietNotification = function(user) {
     to: user.email,
     from: 'jorgebaztan@dietafarma.es',
     subject: 'DietaFarma Online: Nueva dieta',
-    text: `Hola ${user.profile.name},\nya tienes tu dieta disponible en la app.\n\nUn cordial saludo`
+    text: `Hola ${user.profile.name},\nya tienes tu dieta disponible en la web https://dieta-farma-online.herokuapp.com.\n\nUn cordial saludo`
   };
 
   smtpTransport.sendMail(mailOptions, function(err, info) {
