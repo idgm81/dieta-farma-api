@@ -1,27 +1,39 @@
-const Message = require('../models/message');
-const User    = require('../models/user');
+const Message                   = require('../models/message');
+const User                      = require('../models/user');
+const MailController            = require('./mail');
 
 module.exports.get = function(req, res) {
-  Message.find({$or: [{ client: req.params.id }, { nutritionist: req.params.id }]}, (err, message) => {
+  Message.find({$or: [{ client: req.query.userId }, { nutritionist: req.query.userId}]}, (err, messages) => {
     if (err) {
       return res.status(409).json({ errors: 'No message found with this ID' });
     }
 
-    return res.status(200).json({ message });
+    return res.status(200).json({ messages });
   });
 };
 
 module.exports.create = function(req, res, next) {
-  const newMessage = new Message(req.body);
+  const message = req.body;
 
-  newMessage.save().then((message) => {
-    User.update({ _id: req.body.client }, { '$push': { 'profile.messages': message._id } }, (err) => {
-      if (err) {
-        res.status(409).json({ errors: { msg: 'Can not assign this message to client' } });
-        return next(err);
-      }
+  User.findById(req.body.client).then((user) => {
+    message.nutritionist = user.nutritionist;
 
-      return res.status(200).json({ message });
+    const newMessage = new Message(message);
+
+    return newMessage.save().then((message) => {
+
+      User.findByIdAndUpdate(req.body.client, { $push: { 'profile.messages': message._id } }, (err, user) => {
+        if (err) {
+          res.status(409).json({ errors: { msg: 'Can not send message' } });
+          return next(err);
+        }
+
+        MailController.sendMessageNotification(user);
+
+        return res.status(200).json({ message });
+      });
+    }).catch((err) => {
+      return next(err);
     });
   }).catch((err) => {
     return next(err);

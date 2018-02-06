@@ -18,6 +18,7 @@ const MessageSchema = new Schema({
     type: Date,
     required: true
   },
+  title: String,
   text: String,
   unread: {
     type: Boolean,
