@@ -22,7 +22,7 @@ const UserSchema = new Schema({
     required: true,
     default: 'C'
   },
-  nutritionist: Number,
+  nutritionist: Schema.Types.ObjectId,
   profile: {
     name: {
       type: String,
@@ -144,6 +144,7 @@ const UserSchema = new Schema({
     },
     appointments: [],
     diets: [],
+    messages: [],
     resetPasswordToken: String,
     resetPasswordExpires: Date
   }

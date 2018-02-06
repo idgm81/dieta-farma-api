@@ -20,7 +20,7 @@ module.exports.create = function(req, res, next) {
     }
 
     let defaultNutritionist = '';
-    User.find({ role: 'nutritionist'}).then((nutritionist) => { defaultNutritionist = nutritionist._id });
+    User.find({ role: 'N'}).then((nutritionist) => { defaultNutritionist = nutritionist._id });
     // If email is unique and password was provided, we create new user
     const newUser = new User(req.body);
 
@@ -60,7 +60,7 @@ module.exports.getAll = function(req, res, next) {
 };
 
 module.exports.modify = function(req, res, next) {
-  User.update({ _id: req.params.id }, req.body, (err, user) => {
+  User.findByIdAndUpdate(req.params.id, req.body, (err, user) => {
     if (err) {
       res.status(409).json({ errors: { msg: 'No user could be found for this ID.' } });
       return next(err);
