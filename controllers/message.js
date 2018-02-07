@@ -3,7 +3,7 @@ const User                      = require('../models/user');
 const MailController            = require('./mail');
 
 module.exports.get = function(req, res) {
-  Message.find({$or: [{ client: req.query.userId }, { nutritionist: req.query.userId}]}, (err, messages) => {
+  Message.find({$or: [{ client: req.query.userId }, { nutritionist: req.query.userId}]},null, { sort: '-createdAt'}, (err, messages) => {
     if (err) {
       return res.status(409).json({ errors: 'No message found with this ID' });
     }
