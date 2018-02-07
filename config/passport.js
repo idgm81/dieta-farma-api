@@ -6,7 +6,7 @@ const randtoken     = require('rand-token')
 const User          = require('../models/user');
 const config = {
   secret: process.env.SECRET_KEY,
-  expirationTime: 60 * 5, // 5 minutes
+  expirationTime: 60 * 10, // 10 minutes
   jwtSession: {
     session: false
   }
