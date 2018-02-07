@@ -37,13 +37,13 @@ module.exports.sendDietNotification = function(user) {
   });
 };
 
-module.exports.sendMessageNotification = function(user) {
+module.exports.sendMessageNotification = function(user, message) {
   const smtpTransport = nodemailer.createTransport(smtpConfig);
   const mailOptions = {
     to: 'jorgebaztan@dietafarma.es',
     from: user.email,
     subject: 'DietaFarma Online: Nuevo Mensaje',
-    text: `Hola Jorge,\n ${user.profile.name} te ha mandado un mensaje`
+    text: `Hola Jorge,\n${user.profile.name} te ha mandado un mensaje:\n\nAsunto:${message.title}\nMensaje:${message.text}`
   };
 
   smtpTransport.sendMail(mailOptions, function(err, info) {

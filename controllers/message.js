@@ -28,7 +28,7 @@ module.exports.create = function(req, res, next) {
           return next(err);
         }
 
-        MailController.sendMessageNotification(user);
+        MailController.sendMessageNotification(user, message);
 
         return res.status(200).json({ message });
       });
