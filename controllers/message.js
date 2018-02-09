@@ -3,7 +3,7 @@ const User                      = require('../models/user');
 const MailController            = require('./mail');
 
 module.exports.get = function(req, res) {
-  Message.find({$or: [{ client: req.query.userId }, { nutritionist: req.query.userId}]},null, { sort: '-createdAt'}, (err, messages) => {
+  Message.find({ to: req.query.userId }, null, { sort: '-createdAt'}, (err, messages) => {
     if (err) {
       return res.status(409).json({ errors: 'No message found with this ID' });
     }
@@ -15,8 +15,10 @@ module.exports.get = function(req, res) {
 module.exports.create = function(req, res, next) {
   const message = req.body;
 
-  User.findById(req.body.client).then((user) => {
-    message.nutritionist = user.nutritionist;
+  User.findById(req.body.from).then((user) => {
+    if (req.body.to === undefined) {
+      message.to = user.nutritionist;
+    }
 
     const newMessage = new Message(message);
 
