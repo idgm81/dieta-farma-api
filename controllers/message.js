@@ -13,35 +13,44 @@ module.exports.get = function(req, res) {
 };
 
 module.exports.create = function(req, res, next) {
-  const message = req.body;
+  const body = req.body;
+  let newMessage = null;
 
-  User.findById(req.body.from).then((user) => {
-    if (req.body.to === undefined) {
-      message.to = user.nutritionist;
-    }
+  if (req.body.to === undefined) {
+    User.findById(req.body.from).then((userFrom) => {
+      body.to = userFrom.nutritionist;
 
-    const newMessage = new Message(message);
+      User.findById(req.body.to).then((userTo) => {
 
-    return newMessage.save().then((message) => {
+        newMessage = new Message(body);
 
-      if (req.body.to === undefined) {
-        User.findById(req.body.from, (err, user) => {
-          if (err) {
-            res.status(409).json({ errors: { msg: 'Can not send message' } });
-            return next(err);
-          }
+        return newMessage.save().then((message) => {
+          MailController.sendMessageNotification(userFrom, userTo, message);
 
-          MailController.sendMessageNotification(user, message);
+          return res.status(200).json({ message });
+        }).catch((err) => {
+          return next(err);
         });
-      }
-
-      return res.status(200).json({ message });
+      }).catch((err) => {
+        return next(err);
+      });
     }).catch((err) => {
       return next(err);
     });
-  }).catch((err) => {
-    return next(err);
-  });
+  } else {
+
+    Promise.all([User.findById(req.body.from), User.findById(req.body.to)]).then((users) => {
+      newMessage = new Message(body);
+
+      return newMessage.save().then((message) => {
+        MailController.sendMessageNotification(users[0], users[1], message);
+
+        return res.status(200).json({ message });
+      }).catch((err) => {
+        return next(err);
+      });
+    });
+  }
 };
 
 module.exports.delete = function(req, res, next) {
