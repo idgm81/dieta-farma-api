@@ -16,9 +16,9 @@ module.exports.create = function(req, res, next) {
   const newDiet = new Diet(req.body);
 
   newDiet.save().then((diet) => {
-    User.findByIdAndUpdate(req.body.client, { '$push': { 'profile.diets': diet._id } }, (err, user) => {
+    User.findById(req.body.client, (err, user) => {
       if (err) {
-        res.status(409).json({ errors: { msg: 'Can not assign this diet to client' } });
+        res.status(409).json({ errors: { msg: 'Can not afind client to send email notification' } });
         return next(err);
       }
 

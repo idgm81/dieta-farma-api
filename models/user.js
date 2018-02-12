@@ -142,9 +142,6 @@ const UserSchema = new Schema({
       type: Boolean,
       default: false
     },
-    appointments: [],
-    diets: [],
-    messages: [],
     resetPasswordToken: String,
     resetPasswordExpires: Date
   }

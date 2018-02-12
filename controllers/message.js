@@ -24,16 +24,18 @@ module.exports.create = function(req, res, next) {
 
     return newMessage.save().then((message) => {
 
-      User.findByIdAndUpdate(req.body.client, { $push: { 'profile.messages': message._id } }, (err, user) => {
-        if (err) {
-          res.status(409).json({ errors: { msg: 'Can not send message' } });
-          return next(err);
-        }
+      if (req.body.to === undefined) {
+        User.findById(req.body.from, (err, user) => {
+          if (err) {
+            res.status(409).json({ errors: { msg: 'Can not send message' } });
+            return next(err);
+          }
 
-        MailController.sendMessageNotification(user, message);
+          MailController.sendMessageNotification(user, message);
+        });
+      }
 
-        return res.status(200).json({ message });
-      });
+      return res.status(200).json({ message });
     }).catch((err) => {
       return next(err);
     });
