@@ -6,12 +6,16 @@ const mongoose              = require('mongoose');
 const Schema                = mongoose.Schema;
 
 const AppointmentSchema = new Schema({
-  client: {
-    type: String,
+  customer: {
+    type: Schema.Types.ObjectId,
     required: true
   },
   nutritionist: {
+    type: Schema.Types.ObjectId,
+  },
+  type: {
     type: String,
+    enum: [ 'P', 'V' ],
     required: true
   },
   date: {
@@ -19,8 +23,8 @@ const AppointmentSchema = new Schema({
     required: true
   }
 },
-{
-  timestamps: true
-});
+  {
+    timestamps: true
+  });
 
 module.exports = mongoose.model('Appointment', AppointmentSchema);

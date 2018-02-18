@@ -90,8 +90,11 @@ apiRoutes.put('/users/:id', UserController.modify);
   //= ========================
 */
 
-// Get user appointments route (GET http://localhost:4500/api/appointments)
-apiRoutes.get('/appointments', passport.authenticate(), AppointmentController.get);
+// Get nutriotionist appointments route (GET http://localhost:4500/api/appointments/nutriotionist)
+apiRoutes.get('/appointments/nutritionist', passport.authenticate(), AppointmentController.getNutriotionist);
+
+// Get customer appointments route (GET http://localhost:4500/api/appointments/customer)
+apiRoutes.get('/appointments/customer', passport.authenticate(), AppointmentController.getCustomer);
 
 // Create user appointment route (POST http://localhost:4500/api/appointments)
 apiRoutes.post('/appointments', passport.authenticate(), AppointmentController.create);
@@ -99,7 +102,7 @@ apiRoutes.post('/appointments', passport.authenticate(), AppointmentController.c
 // Modify user appointment route (PUT http://localhost:4500/api/appointments/:id)
 apiRoutes.put('/appointments/:id', passport.authenticate(), AppointmentController.modify);
 
-// Delete user appointment route (PUT http://localhost:4500/api/appointments/:id)
+// Delete user appointment route (DELETE http://localhost:4500/api/appointments/:id)
 apiRoutes.delete('/appointments/:id', passport.authenticate(), AppointmentController.delete);
 
 /**
@@ -144,7 +147,7 @@ apiRoutes.post('/signed-request', S3Controller.getUrl);
 // Set url for API group routes
 app.use('/api', apiRoutes);
 
-app.use((err, req, res, next) => {
+app.use((err, req, res) => {
   if (err instanceof expressValidation.ValidationError) {
     res.status(err.status).json(err);
   } else {
