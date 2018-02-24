@@ -30,8 +30,7 @@ const DietSchema = new Schema({
     type: String,
     required: true
   }
-},
-{
+}, {
   timestamps: true
 });
 
