@@ -12,7 +12,7 @@ const bodyParser                = require('body-parser');
 const methodOverride            = require('method-override');
 const cors                      = require('cors');
 const cookieParser              = require('cookie-parser');
-const expressValidation         = require('express-validation');
+const path                      = require('path');
 const Promise                   = require('bluebird');
 const mongoose                  = require('mongoose');
 const passport                  = require('./config/passport')();
@@ -31,6 +31,7 @@ app.use(cookieParser()); // read cookies (needed for auth)
 app.use(bodyParser.json()); // get information from html forms
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(methodOverride());
+app.use(express.static(path.join(__dirname,'public')));
 
 // enable cors
 const corsOption = {
@@ -90,8 +91,8 @@ apiRoutes.put('/users/:id', UserController.modify);
   //= ========================
 */
 
-// Get nutriotionist appointments route (GET http://localhost:4500/api/appointments/nutriotionist)
-apiRoutes.get('/appointments/nutritionist', passport.authenticate(), AppointmentController.getNutriotionist);
+// Get nutriotionist appointments route (GET http://localhost:4500/api/appointments/calendar)
+apiRoutes.get('/appointments/calendar', passport.authenticate(), AppointmentController.getCalendar);
 
 // Get customer appointments route (GET http://localhost:4500/api/appointments/customer)
 apiRoutes.get('/appointments/customer', passport.authenticate(), AppointmentController.getCustomer);
@@ -147,16 +148,10 @@ apiRoutes.post('/signed-request', S3Controller.getUrl);
 // Set url for API group routes
 app.use('/api', apiRoutes);
 
-app.use((err, req, res) => {
-  if (err instanceof expressValidation.ValidationError) {
-    res.status(err.status).json(err);
-  } else {
-    res.status(500)
-      .json({
-        status: err.status,
-        message: err.message
-      });
-  }
+app.use((req, res, next) => {
+  var err = new Error('Not Found');
+  err.status = 404;
+  next(err);
 });
 
 // set up database

@@ -12,7 +12,6 @@ module.exports.create = function(req, res, next) {
     return res.status(400).send({ errors: { msg: 'Debes introducir una contraseña válida' } });
   }
 
-
   User.findOne({ email: req.body.email }).then((user) => {
     // If user exists, return error
     if (user) {
@@ -27,8 +26,9 @@ module.exports.create = function(req, res, next) {
     newUser.set('nutriotionist', defaultNutritionist);
     newUser.save().then((user) => {
       MailController.sendEmail(user);
-      res.status(200).json({ user: { _id: user._id }});
+      MailController.sendConfirmRegistration(user);
 
+      return res.status(200).json({ user: { _id: user._id }});
     }).catch((err) => {
       return next(err);
     });

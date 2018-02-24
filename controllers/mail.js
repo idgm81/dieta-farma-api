@@ -1,4 +1,5 @@
 const nodemailer      = require('nodemailer');
+const mailerhbs       = require('nodemailer-express-handlebars');
 const { smtpConfig }  = require('../config/mail');
 
 module.exports.sendEmail = function(user) {
@@ -12,45 +13,98 @@ module.exports.sendEmail = function(user) {
 
   smtpTransport.sendMail(mailOptions, function(err, info) {
     if (err) {
-      return console.log(err);
+      console.log(err);
+      return smtpTransport.close();
     }
 
     console.log('Message sent: %s', info.messageId);
+    return smtpTransport.close();
+  });
+};
+
+module.exports.sendConfirmRegistration = function(user) {
+  const smtpTransport = nodemailer.createTransport(smtpConfig);
+  smtpTransport.use('compile', mailerhbs({
+    viewPath: './public/assets', //Path to email template folder
+    extName: '.hbs' //extendtion of email template
+  }));
+  const mailOptions = {
+    to: user.email,
+    from: 'alta-online@dietafarma.es',
+    subject: 'DietaFarma Online: Registro completado',
+    template: 'email',
+    context: {
+      title: 'DietaFarma Online: Registro completado',
+      header: `Estimado ${user.profile.name}`,
+      body: 'Bienvenido a Dietafarma online. Desde este momento tienes a tu disposición una plataforma online para que te sea más sencillo realizar tus consultas a tu nutriocionista. Diríjete a https://dieta-farma-online.herokuapp.com/login e introduce tu usuario y contraseña para acceder a la aplicación.\nEn caso de no poder acceder envía un correo a info@dietafarma.es exponiendo tu problema de acceso.\nRecibe un cordial saludo'
+    }
+  };
+
+  smtpTransport.sendMail(mailOptions, function(err, info) {
+    if (err) {
+      console.log(err);
+      return smtpTransport.close();
+    }
+
+    console.log('Message sent: %s', info.messageId);
+    return smtpTransport.close();
   });
 };
 
 module.exports.sendDietNotification = function(user) {
   const smtpTransport = nodemailer.createTransport(smtpConfig);
+  smtpTransport.use('compile', mailerhbs({
+    viewPath: './public/assets', //Path to email template folder
+    extName: '.hbs' //extendtion of email template
+  }));
   const mailOptions = {
     to: user.email,
-    from: 'jorgebaztan@dietafarma.es',
-    subject: 'DietaFarma Online: Nueva dieta',
-    text: `Hola ${user.profile.name},\nya tienes tu dieta disponible en la web https://dieta-farma-online.herokuapp.com.\n\nUn cordial saludo`
+    from: 'info@dietafarma.es',
+    subject: 'DietaFarma Online: Nueva información en su muro',
+    template: 'email',
+    context: {
+      title: 'DietaFarma Online: Nueva información en su muro',
+      header: `Estimado ${user.profile.name}`,
+      body: 'Tu nutricionista online ha puesto a tu disposición en la plataforma un nuevo documento. Para descargarlo diríjete a https://dieta-farma-online.herokuapp.com/login e introduce tu usuario y contraseña para acceder a la aplicación.\nEn caso de no poder acceder envía un correo a info@dietafarma.es exponiendo tu problema de acceso. Si puedes verlo pero te surgen dudas sobre el documento o de cómo realizar algunos aspectos (en el caso de tratarse de una dieta personalizada), escribe tu duda en el apartado “Mensajes” de la plataforma.\nRecibe un cordial saludo'
+    }
   };
 
   smtpTransport.sendMail(mailOptions, function(err, info) {
     if (err) {
-      return console.log(err);
+      console.log(err);
+      return smtpTransport.close();
     }
 
     console.log('Message sent: %s', info.messageId);
+    return smtpTransport.close();
   });
 };
 
-module.exports.sendMessageNotification = function(from, to, message) {
+module.exports.sendMessageNotification = function(from, to) {
   const smtpTransport = nodemailer.createTransport(smtpConfig);
+  smtpTransport.use('compile', mailerhbs({
+    viewPath: './public/assets', //Path to email template folder
+    extName: '.hbs' //extendtion of email template
+  }));
   const mailOptions = {
     to: to.email,
     from: from.email,
-    subject: 'DietaFarma Online: Nuevo Mensaje',
-    text: `Hola ${to.profile.name},\n${from.profile.name} te ha mandado un mensaje:\n\nAsunto:${message.title}\nMensaje:${message.text}`
+    subject: 'DietaFarma Online: Nuevo mensaje de tu nutricionista',
+    template: 'email',
+    context: {
+      title: 'DietaFarma Online: Nuevo mensaje de tu nutricionista',
+      header: `Estimado ${to.profile.name}`,
+      body: 'Tu nutricionista online ha contestado a tu último mensaje. Para leerlo diríjete a https://dieta-farma-online.herokuapp.com/login e introduce tu usuario y contraseña para acceder a la aplicación.\nuRecibe un cordial saludo'
+    }
   };
 
   smtpTransport.sendMail(mailOptions, function(err, info) {
     if (err) {
-      return console.log(err);
+      console.log(err);
+      return smtpTransport.close();
     }
 
     console.log('Message sent: %s', info.messageId);
+    return smtpTransport.close();
   });
 };
