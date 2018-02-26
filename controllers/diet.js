@@ -54,13 +54,6 @@ module.exports.delete = function(req, res, next) {
         return next(err);
       }
 
-      User.findByIdAndUpdate(req.query.userId, { '$pull': { 'profile.diets': diet._id } }, (err) => {
-        if (err) {
-          res.status(409).json({ errors: { msg: 'Can not delete client diet' } });
-          return next(err);
-        }
-      });
-
       return res.status(204).end();
     });
   });
