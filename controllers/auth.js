@@ -28,6 +28,20 @@ module.exports.userAuth = function(req, res) {
   }).catch((err) => { throw err });
 };
 
+module.exports.refreshToken =  function(req, res) {
+  const decoded = passport.verifyToken(req.body.refreshToken);
+
+  User.findById(decoded.id).then((user) => {
+    if (!user) {
+      return res.status(401).json({ errors: { msg: 'Authentication failed. User not found.' } });
+    } 
+    
+    const token = passport.generateToken({ id: user._id, role: user.role});
+  
+    return res.status(200).json(token);
+  });
+};
+
 // Role authorization check
 module.exports.roleAuthorization = function(requiredRole) {
   return function(req, res, next) {
@@ -93,18 +107,6 @@ module.exports.forgotPassword = function(req, res, next) {
         return res.status(200).json({ error: { msg: 'Por favor, revisa la bandeja de entrada de tu correo y sigue las instrucciones para resetear tu contraseña' } });
       });
     });
-  });
-};
-
-module.exports.refreshToken =  function(req, res, next) {
-  User.findOne({ email }).then((user) => {
-    if (!user) {
-      res.status(401).json({ errors: { msg: 'Authentication failed. User not found.' } });
-    } else {
-      const tokenInfo = passport.generateToken({ user: user._id, email: user.email });
-
-      res.status(200).json({ token: tokenInfo.token });
-    }
   });
 };
 

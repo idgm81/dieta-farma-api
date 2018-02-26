@@ -65,7 +65,7 @@ apiRoutes.post('/auth/user', AuthenticationController.userAuth);
 apiRoutes.post('/auth/reset_password', AuthenticationController.forgotPassword);
 
 // Refresh Token
-apiRoutes.post('/auth/refresh_token', AuthenticationController.refreshToken);
+apiRoutes.post('/auth/refreshToken', AuthenticationController.refreshToken);
 
 /**
   //= ========================
