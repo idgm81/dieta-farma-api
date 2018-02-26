@@ -92,19 +92,19 @@ apiRoutes.put('/users/:id', UserController.modify);
 */
 
 // Get nutriotionist appointments route (GET http://localhost:4500/api/appointments/calendar)
-apiRoutes.get('/appointments/calendar', passport.authenticate(), AppointmentController.getCalendar);
+//apiRoutes.get('/appointments/calendar', passport.authenticate(), AppointmentController.getCalendar);
 
 // Get customer appointments route (GET http://localhost:4500/api/appointments/customer)
-apiRoutes.get('/appointments/customer', passport.authenticate(), AppointmentController.getCustomer);
+//apiRoutes.get('/appointments/customer', passport.authenticate(), AppointmentController.getCustomer);
 
 // Create user appointment route (POST http://localhost:4500/api/appointments)
-apiRoutes.post('/appointments', passport.authenticate(), AppointmentController.create);
+//apiRoutes.post('/appointments', passport.authenticate(), AppointmentController.create);
 
 // Modify user appointment route (PUT http://localhost:4500/api/appointments/:id)
-apiRoutes.put('/appointments/:id', passport.authenticate(), AppointmentController.modify);
+//apiRoutes.put('/appointments/:id', passport.authenticate(), AppointmentController.modify);
 
 // Delete user appointment route (DELETE http://localhost:4500/api/appointments/:id)
-apiRoutes.delete('/appointments/:id', passport.authenticate(), AppointmentController.delete);
+//apiRoutes.delete('/appointments/:id', passport.authenticate(), AppointmentController.delete);
 
 /**
   //= ========================
