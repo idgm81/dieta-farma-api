@@ -15,7 +15,7 @@ const AppointmentSchema = new Schema({
   },
   type: {
     type: String,
-    enum: [ 'P', 'V' ],
+    enum: [ 'P', 'S' ],
     required: true
   },
   date: {

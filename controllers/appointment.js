@@ -2,17 +2,17 @@ const Appointment = require('../models/appointment');
 const User = require('../models/user');
 const moment = require('moment');
 
-module.exports.getCustomer = function(req, res) {
+module.exports.get = function(req, res) {
   Appointment.find({ customer: req.query.userId }, (err, appointments) => {
     if (err) {
-      return res.status(409).json({ errors: { msg: 'No appointments found for this nutritionist' }});
+      return res.status(409).json({ errors: { msg: 'No appointments found for this customer' }});
     }
 
     return res.status(200).json({ appointments });
   });
 };
   
-module.exports.getNutriotionist = function(req, res) {
+module.exports.getCalendar = function(req, res) {
   User.findById(req.query.userId, (err, user) => {
     if (err) {
       return res.status(409).json({ errors: { msg: 'No user found for this ID' }});
@@ -24,31 +24,35 @@ module.exports.getNutriotionist = function(req, res) {
       }
 
       const calendar = getCalendar();
-      const notBooked = calendar.filter((date) => !parseAppointments(appointments).includes(date));
+      const notBooked = calendar.filter((date) => !parseAppointments(appointments).includes(date.day));
 
       return res.status(200).json({ appointments: notBooked });
 
       function parseAppointments(appointments) {
-        return appointments.map((app) => moment(app.date).format());
+        return appointments.map((app) => moment(app.day).format('YYYY-MM-DD'));
       }
 
       function getCalendar() {
-        const list = [];
+        const calendar = [];
+        const jobHours = [
+          '09:00', '09:30', '10:00', '10:30',
+          '11:00', '11:30', '12:00', '12:30',
+          '13:00', '13:30', '15:00', '15:30',
+          '16:00', '16:30', '17:00', '17:30'];
       
         for (let i=0; i<31; i++) {
           const jobDay = moment().add(i, 'day');
-          const jobHours = [
-            '09:00', '09:30', '10:00', '10:30',
-            '11:00', '11:30', '12:00', '12:30',
-            '13:00', '13:30', '15:00', '15:30',
-            '16:00', '16:30', '17:00', '17:30'];
-
+          
           if (jobDay.get('day') > 0 && jobDay.get('day') < 6) {
-            jobHours.forEach((h) => list.push(moment(`${jobDay.format('YYYY-MM-DD')} ${h}`).format()));
+            calendar.push({ day: jobDay.format('YYYY-MM-DD'), hours:[]});
           }
         }
-      
-        return list;
+
+        return calendar.map((item) => {
+          item.hours = jobHours;
+
+          return item;
+        });
       }
     });
   });
@@ -66,7 +70,7 @@ module.exports.create = function(req, res, next) {
       nutritionist: user.nutritionist,
       type: req.body.type,
       date: req.body.date
-    }
+    };
 
     new Appointment(appointment).save().then((appointment) => {
       res.status(200).json({ appointment });
