@@ -3,12 +3,12 @@ const User = require('../models/user');
 const moment = require('moment');
 
 module.exports.get = function(req, res) {
-  Appointment.find({ customer: req.query.userId }, (err, appointments) => {
+  Appointment.find({ $or: [ { customer: req.query.userId }, { nutritionist: req.query.userId } ] }, (err, appointments) => {
     if (err) {
       return res.status(409).json({ errors: { msg: 'No appointments found for this customer' }});
     }
 
-    return res.status(200).json({ appointments });
+    return res.status(200).json({ items: appointments });
   });
 };
   
@@ -23,36 +23,57 @@ module.exports.getCalendar = function(req, res) {
         return res.status(409).json({ errors: { msg: 'No appointments found for this nutritionist' }});
       }
 
-      const calendar = getCalendar();
-      const notBooked = calendar.filter((date) => !parseAppointments(appointments).includes(date.day));
+      const calendar = getFlatCalendar();
+      const availables = calendar.filter((date) => !parseAppointments(appointments).includes(date));
 
-      return res.status(200).json({ appointments: notBooked });
+      return res.status(200).json({ items: formatCalendar(availables) });
 
       function parseAppointments(appointments) {
-        return appointments.map((app) => moment(app.day).format('YYYY-MM-DD'));
+        return appointments.map((cita) => moment(cita.date).format('YYYY-MM-DD HH:mm'))
       }
 
-      function getCalendar() {
-        const calendar = [];
-        const jobHours = [
-          '09:00', '09:30', '10:00', '10:30',
-          '11:00', '11:30', '12:00', '12:30',
-          '13:00', '13:30', '15:00', '15:30',
-          '16:00', '16:30', '17:00', '17:30'];
+      function getFlatCalendar() {
+        const list = [];
       
         for (let i=0; i<31; i++) {
           const jobDay = moment().add(i, 'day');
-          
+          const jobHours = [
+            '09:00', '09:30', '10:00', '10:30',
+            '11:00', '11:30', '12:00', '12:30',
+            '13:00', '13:30', '15:00', '15:30',
+            '16:00', '16:30', '17:00', '17:30'];
+    
           if (jobDay.get('day') > 0 && jobDay.get('day') < 6) {
-            calendar.push({ day: jobDay.format('YYYY-MM-DD'), hours:[]});
+            jobHours.forEach((h) => list.push(`${jobDay.format('YYYY-MM-DD')} ${h}`));
+          }
+        }
+      
+        return list;
+      }
+
+      function formatCalendar(calendar) {
+        let formatted = [];
+        let jobDay = '';
+        let jobHour = '';
+        let index = 0;
+        for (let i=0; i<calendar.length; i++) {
+          jobDay = calendar[i].split(' ')[0];
+          jobHour = calendar[i].split(' ')[1];
+          if (i===0) {
+            formatted.push({ day: jobDay, hours: []});
+            formatted[index].hours.push(jobHour);
+          } else {
+            if (jobDay !== calendar[i-1].split(' ')[0]) {
+              index++;
+              formatted.push({ day: jobDay, hours: [] });
+              formatted[index].hours.push(jobHour);
+            } else {
+              formatted[index].hours.push(jobHour);
+            }
           }
         }
 
-        return calendar.map((item) => {
-          item.hours = jobHours;
-
-          return item;
-        });
+        return formatted;
       }
     });
   });
