@@ -8,7 +8,7 @@ module.exports.get = function(req, res) {
       return res.status(409).json({ errors: { msg: 'No appointments found for this customer' }});
     }
 
-    return res.status(200).json({ items: appointments });
+    return res.status(200).json({ items: appointments.filter((a) => moment(a.date).diff(moment()) >= 0) });
   });
 };
   
