@@ -18,7 +18,7 @@ module.exports.getCalendar = function(req, res) {
       return res.status(409).json({ errors: { msg: 'No user found for this ID' }});
     }
 
-    Appointment.find({ nutritionist: user.nutritionist}, (err, appointments) => {
+    Appointment.find({ nutritionist: user.nutritionist }, (err, appointments) => {
       if (err) {
         return res.status(409).json({ errors: { msg: 'No appointments found for this nutritionist' }});
       }
