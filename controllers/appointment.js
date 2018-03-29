@@ -8,7 +8,9 @@ module.exports.get = function(req, res) {
       return res.status(409).json({ errors: { msg: 'No appointments found for this customer' }});
     }
 
-    return res.status(200).json({ items: appointments.filter((a) => moment(a.date).diff(moment()) >= 0) });
+    return res.status(200).json({ items: appointments.filter((a) => {
+      return moment.parseZone(a.date).isAfter(moment())
+    }) });
   });
 };
   
@@ -29,13 +31,13 @@ module.exports.getCalendar = function(req, res) {
       return res.status(200).json({ items: formatCalendar(availables) });
 
       function parseAppointments(appointments) {
-        return appointments.map((cita) => moment(cita.date).format('YYYY-MM-DD HH:mm'))
+        return appointments.map((cita) => moment.parseZone(cita.date).format('YYYY-MM-DD HH:mm'))
       }
 
       function getFlatCalendar() {
         const list = [];
       
-        for (let i=0; i<31; i++) {
+        for (let i=1; i<31; i++) {
           const jobDay = moment().add(i, 'day');
           const jobHours = [
             '09:00', '09:30', '10:00', '10:30',
