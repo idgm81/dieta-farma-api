@@ -1,5 +1,5 @@
-const MailController            = require('./mail');
-const User                      = require('../models/user');
+const MailController  = require('./mail');
+const User            = require('../models/user');
 
 module.exports.create = function(req, res, next) {
   // Return error if no email provided
@@ -39,7 +39,7 @@ module.exports.get = function(req, res) {
 
   User.findOne({ _id: req.params.id }, (err, user) => {
     if (err) {
-      return res.status(409).json({ errors: { msg: 'No user could be found for this ID' } });
+      return res.status(409).json({ error: 'No se ha podido recuperar los datos de este usuario' });
     }
 
     return res.status(200).json({ user });
@@ -51,7 +51,7 @@ module.exports.getAll = function(req, res, next) {
 
   User.find({ role }, (err, users) => {
     if (err) {
-      res.status(409).json({ errors: { msg: 'No users could be found' } });
+      res.status(409).json({ error: 'No se ha podido recuperar la lista de usuarios' });
       return next(err);
     }
 
@@ -59,11 +59,10 @@ module.exports.getAll = function(req, res, next) {
   });
 };
 
-module.exports.modify = function(req, res, next) {
+module.exports.modify = function(req, res) {
   User.findByIdAndUpdate(req.params.id, req.body, (err, user) => {
-    if (err) {
-      res.status(409).json({ errors: { msg: 'No user could be found for this ID.' } });
-      return next(err);
+    if (err || !user) {
+      res.status(409).json({ error: 'No se ha podido actualizar los datos de este usuario' });
     }
 
     return res.status(200).json({ user });
@@ -73,12 +72,12 @@ module.exports.modify = function(req, res, next) {
 module.exports.delete = function(req, res, next) {
   User.findById(req.params.id, (err, user) => {
     if (err) {
-      res.status(409).json({ errors: { msg: 'No user could be found for this ID.' } });
+      res.status(409).json({ error: 'No se ha podido recuperar los datos de este usuario' });
       return next(err);
     }
     user.remove((err) => {
       if (err) {
-        res.status(409).json({ error: { msg: 'Can not remove user' } });
+        res.status(500).json({ error: 'No se ha podido dar de baja este usuario' });
         return next(err);
       }
 
