@@ -2,6 +2,7 @@ const nodemailer      = require('nodemailer');
 const mailerhbs       = require('nodemailer-express-handlebars');
 const { smtpConfig }  = require('../config/mail');
 
+
 module.exports.sendEmail = function(user) {
   const smtpTransport = nodemailer.createTransport(smtpConfig);
   const mailOptions = {
@@ -26,7 +27,7 @@ module.exports.sendConfirmRegistration = function(user) {
   const smtpTransport = nodemailer.createTransport(smtpConfig);
   smtpTransport.use('compile', mailerhbs({
     viewPath: './public/assets', //Path to email template folder
-    extName: '.hbs' //extendtion of email template
+    extName: '.hbs'
   }));
   const mailOptions = {
     to: user.email,
@@ -51,11 +52,44 @@ module.exports.sendConfirmRegistration = function(user) {
   });
 };
 
+module.exports.sendForgotPasswordNotification = function(user) {
+  const smtpTransport = nodemailer.createTransport(smtpConfig);
+  smtpTransport.use('compile', mailerhbs({
+    viewPath: './public/assets', //Path to email template folder
+    extName: '.hbs'
+  }));
+  const mailOptions = {
+    to: user.email,
+    from: 'info@dietafarma.es',
+    subject: 'DietaFarma Online: Cambio de contraseña',
+    template: 'change-password',
+    context: {
+      title: 'DietaFarma Online: Cambio de contraseña',
+      header: `Estimado ${user.profile.name}`,
+      body: `Has recibido este mensaje porque has solicitado el cambio de contraseña de tu cuenta en DietaFarma Online\n\n
+      Por favor, haz click en el enlace de más abajo para continuar el proceso:\n\n
+      Si no has solicitado este cambio, por favor ignora este email y tu contraseña no será modificada.\n`,
+      host: (process.env.NODE_ENV === 'development') ? 'localhost:4200' : 'dieta-farma-online.herokuapp.com',
+      token: `${user.resetPasswordToken}`
+    }
+  };
+
+  smtpTransport.sendMail(mailOptions, function(err, info) {
+    if (err) {
+      console.log(err);
+      return smtpTransport.close();
+    }
+
+    console.log('Message sent: %s', info.messageId);
+    return smtpTransport.close();
+  });
+};
+
 module.exports.sendDietNotification = function(user) {
   const smtpTransport = nodemailer.createTransport(smtpConfig);
   smtpTransport.use('compile', mailerhbs({
     viewPath: './public/assets', //Path to email template folder
-    extName: '.hbs' //extendtion of email template
+    extName: '.hbs'
   }));
   const mailOptions = {
     to: user.email,
@@ -84,7 +118,7 @@ module.exports.sendMessageNotification = function(from, to) {
   const smtpTransport = nodemailer.createTransport(smtpConfig);
   smtpTransport.use('compile', mailerhbs({
     viewPath: './public/assets', //Path to email template folder
-    extName: '.hbs' //extendtion of email template
+    extName: '.hbs'
   }));
   const mailOptions = {
     to: to.email,

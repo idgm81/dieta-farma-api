@@ -61,11 +61,14 @@ apiRoutes.get('/', (req, res) => {
 // login auth route (POST http://localhost:4500/api/auth/user)
 apiRoutes.post('/auth/user', AuthenticationController.userAuth);
 
-// Reset password route
-apiRoutes.post('/auth/reset_password', AuthenticationController.forgotPassword);
+// Reset password route (POST http://localhost:4500/api/auth/modifyPassword)
+apiRoutes.post('/auth/modifyPassword', AuthenticationController.modifyPassword);
 
 // Refresh Token
 apiRoutes.post('/auth/refreshToken', AuthenticationController.refreshToken);
+
+// Check email (GET http://localhost:4500/api/auth/checkEmail?email=:email)
+apiRoutes.get('/auth/checkEmail', AuthenticationController.checkEmail);
 
 /**
   //= ========================
@@ -83,7 +86,8 @@ apiRoutes.get('/users/:id', passport.authenticate(), UserController.get);
 apiRoutes.post('/users', UserController.create);
 
 // Modify user route (PUT http://localhost:4500/api/users/:id)
-apiRoutes.put('/users/:id', UserController.modify);
+apiRoutes.put('/users/:id', passport.authenticate(), UserController.modify);
+
 
 /**
   //= ========================

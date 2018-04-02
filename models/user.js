@@ -37,6 +37,9 @@ const UserSchema = new Schema({
       enum: [ 'male', 'female' ],
       required: true
     },
+    avatar: {
+      type: String
+    },
     birthday: {
       type: Date,
       required: false
@@ -146,16 +149,14 @@ const UserSchema = new Schema({
     resetPasswordExpires: Date
   }
 },
-{
-  timestamps: true
-});
+  {
+    timestamps: true
+  });
 
 // Pre-save of user to database, hash password if password is modified or new
 UserSchema.pre('save', function(next) {
   const user = this;
   const SALT_FACTOR = 10;
-
-  if (!user.isModified('password') && !user.isNew) return next();
 
   bcrypt.genSalt(SALT_FACTOR, (err, salt) => {
     if (err) return next(err);

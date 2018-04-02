@@ -1,8 +1,8 @@
 const crypto          = require('crypto');
-const nodemailer      = require('nodemailer');
+const bcrypt          = require('bcrypt');
 const User            = require('../models/user');
 const passport        = require('../config/passport')();
-const { smtpConfig }  = require('../config/mail');
+const MailController  = require('./mail');
 
 // Login user
 module.exports.userAuth = function(req, res) {
@@ -64,13 +64,10 @@ module.exports.roleAuthorization = function(requiredRole) {
   }
 }
 
-module.exports.forgotPassword = function(req, res, next) {
-  const email = req.body.email;
-
-  User.findOne({ email }, (err, existingUser) => {
-    // If user is not found, return error
-    if (err || existingUser == null) {
-      res.status(409).json({ error: { msg: 'No existe ningún usuario con ese email registrado' } });
+module.exports.checkEmail = function(req, res, next) {
+  User.findOne({email: req.query.email}, (err, user) => {
+    if (err || user === null) {
+      res.status(409).json({ errors: { msg: 'No user could be found for this email' } });
       return next(err);
     }
 
@@ -81,61 +78,50 @@ module.exports.forgotPassword = function(req, res, next) {
       const resetToken = buffer.toString('hex');
       if (err) { return next(err); }
 
-      existingUser.resetPasswordToken = resetToken;
-      existingUser.resetPasswordExpires = Date.now() + 60 * 15 * 1000 // 15 minutes
+      user.resetPasswordToken = resetToken;
+      user.resetPasswordExpires = Date.now() + 60 * 15 * 1000 // 15 minutes
 
-      existingUser.save((err) => {
+      user.save((err) => {
         // If error in saving token, return it
-        if (err) { return next(err); }
+        if (err) {
+          return res.status(500).json({ error: { msg: 'No se pudo resetear la contraseña'}});
+        }
 
-        var smtpTransport = nodemailer.createTransport('SMTP', smtpConfig );
+        MailController.sendForgotPasswordNotification(user);
 
-        const mailOptions = {
-          to: existingUser.email,
-          from: 'jorgebaztan@dietafarma.es',
-          subject: 'DietaFarma Online: Cambio de contraseña',
-          text: `${'Has recibido este mensaje porque alguien ha solicitado el cambio de contraseña de tu cuenta eb DietaFarma\n\n' +
-            'Por favor, haz click en el siguiente enlace para continuar el proceso:\n\n' +
-            'http://'}${req.headers.host}/reset-password/${resetToken}\n\n` +
-            'Si no has solicitado este cambio, por favor ignora este email y tu contraseña no será modificada.\n'
-        };
-
-        smtpTransport.sendMail(mailOptions, function(err) {
-          next(err, 'done');
-        });
-
-        return res.status(200).json({ error: { msg: 'Por favor, revisa la bandeja de entrada de tu correo y sigue las instrucciones para resetear tu contraseña' } });
+        return res.status(204).end();
       });
     });
   });
 };
 
-module.exports.verifyToken = function(req, res, next) {
-  User.findOne({ resetPasswordToken: req.params.token, resetPasswordExpires: { $gt: Date.now() } }, (err, resetUser) => {
+module.exports.modifyPassword = function(req, res) {
+  User.findOne({ resetPasswordToken: req.body.token, resetPasswordExpires: { $gt: Date.now() } }, (err, resetUser) => {
     // If query returned no results, token expired or was invalid. Return error.
     if (!resetUser) {
-      res.status(403).json({ error: { msg: 'Your token has expired. Please attempt to reset your password again.' } });
+      return res.status(403).json({ error: { msg: 'El token de seguridad ha caducado. Solicita otro cambio de contraseña' } });
     }
 
-    // Otherwise, save new password and clear resetToken from database
-    resetUser.password = req.body.password;
-    resetUser.resetPasswordToken = undefined;
-    resetUser.resetPasswordExpires = undefined;
+    // Otherwise, save new password and clear resetPasswordToken from database
 
-    resetUser.save((err) => {
-      if (err) { return next(err); }
+    bcrypt.genSalt(10, (err, salt) => {
+      if (err) return res.status(500).json({ errors: { msg: 'Server error' }});
+  
+      bcrypt.hash(req.body.password, salt, (err, hash) => {
+        if (err) return res.status(500).json({ errors: { msg: 'Server error' }});
 
-      // If password change saved successfully, alert user via email
-      const message = {
-        subject: 'Password Changed',
-        text: 'You are receiving this email because you changed your password. \n\n' +
-          'If you did not request this change, please contact us immediately.'
-      };
-
-        // Otherwise, send user email confirmation of password change via Mailgun
-      nodemailer.sendEmail(message);
-
-      return res.status(200).json({ error: { msg: 'Password changed successfully. Please login with your new password.' } });
+        resetUser.password = hash;
+        resetUser.resetPasswordToken = undefined;
+        resetUser.resetPasswordExpires = undefined;
+        
+        resetUser.save((err) => {
+          if (err) {
+            return res.status(500).json({ errors: { msg: 'Server error' }});
+          }
+    
+          return res.status(204).json({ errors: { msg: 'Server error' }});
+        });
+      });
     });
   });
 };
