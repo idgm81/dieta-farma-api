@@ -1,5 +1,4 @@
 const crypto          = require('crypto');
-const bcrypt          = require('bcrypt');
 const User            = require('../models/user');
 const passport        = require('../config/passport')();
 const MailController  = require('./mail');
@@ -11,7 +10,7 @@ module.exports.userAuth = function(req, res) {
 
   User.findOne({ email }).then((user) => {
     if (!user) {
-      res.status(401).json({ error: { msg: 'Authentication failed. User not found.' } });
+      res.status(401).json({ error: 'Email incorrecto' });
     } else {
       // check if password matches
       user.comparePassword(password, function (err, isMatch) {
@@ -21,7 +20,7 @@ module.exports.userAuth = function(req, res) {
 
           res.status(200).json(token);
         } else {
-          res.status(401).json({ error: { msg: 'Authentication failed. Wrong password.' } });
+          res.status(401).json({ error: 'Contraseña incorrecta' });
         }
       });
     }
@@ -33,7 +32,7 @@ module.exports.refreshToken =  function(req, res) {
 
   User.findById(decoded.id).then((user) => {
     if (!user) {
-      return res.status(401).json({ errors: { msg: 'Authentication failed. User not found.' } });
+      return res.status(401).json({ error: 'Usuario no econtrado' });
     } 
     
     const token = passport.generateToken({ id: user._id, role: user.role});
@@ -49,7 +48,7 @@ module.exports.roleAuthorization = function(requiredRole) {
 
     User.findById(user._id, (err, foundUser) => {
       if (err) {
-        res.status(409).json({ error: { msg: 'No user was found.' } });
+        res.status(409).json({ error: 'Usuario no encontrado' });
         return next(err);
       }
 
@@ -58,7 +57,7 @@ module.exports.roleAuthorization = function(requiredRole) {
         return next();
       }
 
-      res.status(401).json({ error: { msg: 'You are not authorized to view this content.' } });
+      res.status(401).json({ error: 'You are not authorized to view this content' });
       return next('Unauthorized');
     })
   }
@@ -67,7 +66,7 @@ module.exports.roleAuthorization = function(requiredRole) {
 module.exports.checkEmail = function(req, res, next) {
   User.findOne({email: req.query.email}, (err, user) => {
     if (err || user === null) {
-      res.status(409).json({ errors: { msg: 'No user could be found for this email' } });
+      res.status(409).json({ error: 'No user could be found for this email' });
       return next(err);
     }
 
@@ -84,7 +83,7 @@ module.exports.checkEmail = function(req, res, next) {
       user.save((err) => {
         // If error in saving token, return it
         if (err) {
-          return res.status(500).json({ error: { msg: 'No se pudo resetear la contraseña'}});
+          return res.status(500).json({ error: 'No se pudo resetear la contraseña' });
         }
 
         MailController.sendForgotPasswordNotification(user);
@@ -96,32 +95,25 @@ module.exports.checkEmail = function(req, res, next) {
 };
 
 module.exports.modifyPassword = function(req, res) {
+
   User.findOne({ resetPasswordToken: req.body.token, resetPasswordExpires: { $gt: Date.now() } }, (err, resetUser) => {
     // If query returned no results, token expired or was invalid. Return error.
     if (!resetUser) {
-      return res.status(403).json({ error: { msg: 'El token de seguridad ha caducado. Solicita otro cambio de contraseña' } });
+      return res.status(403).json({ error: 'El token de seguridad ha caducado. Solicita otro cambio de contraseña' });
     }
 
     // Otherwise, save new password and clear resetPasswordToken from database
 
-    bcrypt.genSalt(10, (err, salt) => {
-      if (err) return res.status(500).json({ errors: { msg: 'Server error' }});
-  
-      bcrypt.hash(req.body.password, salt, (err, hash) => {
-        if (err) return res.status(500).json({ errors: { msg: 'Server error' }});
+    resetUser.password = req.body.password;
+    resetUser.resetPasswordToken = undefined;
+    resetUser.resetPasswordExpires = undefined;
 
-        resetUser.password = hash;
-        resetUser.resetPasswordToken = undefined;
-        resetUser.resetPasswordExpires = undefined;
-        
-        resetUser.save((err) => {
-          if (err) {
-            return res.status(500).json({ errors: { msg: 'Server error' }});
-          }
-    
-          return res.status(204).json({ errors: { msg: 'Server error' }});
-        });
-      });
+    resetUser.save((err) => {
+      if (err) {
+        return res.status(500).json({ error: 'Server error' });
+      }
+
+      return res.status(204).json({ error: 'Server error' });
     });
   });
 };
