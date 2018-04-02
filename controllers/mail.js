@@ -60,7 +60,7 @@ module.exports.sendForgotPasswordNotification = function(user) {
   }));
   const mailOptions = {
     to: user.email,
-    from: 'info@dietafarma.es',
+    from: 'gestion@dietafarma.es',
     subject: 'DietaFarma Online: Cambio de contraseña',
     template: 'change-password',
     context: {
