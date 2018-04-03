@@ -20,7 +20,7 @@ const passport                  = require('./config/passport')();
 const AuthenticationController  = require('./controllers/auth');
 const UserController            = require('./controllers/user');
 const AppointmentController     = require('./controllers/appointment');
-const MessageController         = require('./controllers/message');
+const ThreadController          = require('./controllers/thread');
 const DietController            = require('./controllers/diet');
 const S3Controller              = require('./controllers/s3');
 
@@ -116,14 +116,17 @@ apiRoutes.delete('/appointments/:id', passport.authenticate(), AppointmentContro
   //= ========================
 */
 
-// Get user messages route (GET http://localhost:4500/api/messages)
-apiRoutes.get('/messages', passport.authenticate(), MessageController.get);
+// Get user messages route (GET http://localhost:4500/api/threads?userId=:userId)
+apiRoutes.get('/threads', passport.authenticate(), ThreadController.get);
 
-// Create user message route (POST http://localhost:4500/api/messages)
-apiRoutes.post('/messages', passport.authenticate(), MessageController.create);
+// Create user message route (POST http://localhost:4500/api/threads)
+apiRoutes.post('/threads', passport.authenticate(), ThreadController.create);
 
-// Delete user messages route (DELETE http://localhost:4500/api/messages/:id)
-apiRoutes.delete('/messages/:id', passport.authenticate(), MessageController.delete);
+// Create user message route (POST http://localhost:4500/api/threads/:id)
+apiRoutes.put('/threads/:id', passport.authenticate(), ThreadController.modify);
+
+// Delete user messages route (DELETE http://localhost:4500/api/threads/:id)
+apiRoutes.delete('/threads/:id', passport.authenticate(), ThreadController.delete);
 
 /**
   //= ========================
