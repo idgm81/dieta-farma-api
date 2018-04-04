@@ -59,7 +59,9 @@ module.exports.modify = function(req, res) {
       text: req.body.text
     };
 
-    return thread.update({ $push: { messages: newThreadMessage }})
+    return thread.update({
+      $push: { messages: newThreadMessage },
+      $set: { unread: false } })
       .then(() => res.status(204).end())
       .catch(() => res.status(409).json({ error: 'Error al enviar el mensaje' }))
   }).catch(() => res.status(409).json({ error: 'Conversación no encontrada' }));
