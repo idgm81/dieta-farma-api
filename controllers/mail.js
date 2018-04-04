@@ -66,8 +66,8 @@ module.exports.sendForgotPasswordNotification = function(user) {
     context: {
       title: 'DietaFarma Online: Cambio de contraseña',
       header: `Estimado ${user.profile.name}`,
-      body: `Has recibido este mensaje porque has solicitado el cambio de contraseña de tu cuenta en DietaFarma Online\n\n
-      Por favor, haz click en el enlace de más abajo para continuar el proceso:\n\n
+      body: `Has recibido este mensaje porque has solicitado el cambio de contraseña de tu cuenta en DietaFarma Online.\n\n
+      Por favor, haz click en el enlace de más abajo para continuar el proceso.\n\n
       Si no has solicitado este cambio, por favor ignora este email y tu contraseña no será modificada.\n`,
       host: (process.env.NODE_ENV === 'development') ? 'localhost:4200' : 'dieta-farma-online.herokuapp.com',
       token: `${user.resetPasswordToken}`
