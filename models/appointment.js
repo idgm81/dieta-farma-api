@@ -8,10 +8,12 @@ const Schema                = mongoose.Schema;
 const AppointmentSchema = new Schema({
   customer: {
     type: Schema.Types.ObjectId,
+    ref: 'User',
     required: true
   },
   nutritionist: {
     type: Schema.Types.ObjectId,
+    ref: 'User'
   },
   type: {
     type: String,

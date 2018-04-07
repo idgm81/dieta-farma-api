@@ -1,28 +1,33 @@
-const Appointment = require('../models/appointment');
-const User = require('../models/user');
-const moment = require('moment');
+const Appointment   = require('../models/appointment');
+const User          = require('../models/user');
+const moment        = require('moment');
+const mongoose      = require('mongoose');
 
 module.exports.get = function(req, res) {
-  Appointment.find({ $or: [ { customer: req.query.userId }, { nutritionist: req.query.userId } ] }, (err, appointments) => {
-    if (err) {
-      return res.status(409).json({ errors: { msg: 'No appointments found for this customer' }});
-    }
+  Appointment.aggregate([
+    { $lookup: { from: 'users', localField: 'customer', foreignField: '_id', as: 'customer_data' } },
+    { $match: { $or: [{ customer: mongoose.Types.ObjectId(req.query.userId) }, { nutritionist: mongoose.Types.ObjectId(req.query.userId) }] } },
+    { $sort: { createdAt: -1 } }])
+    .exec((err, appointments) => {
+      if (err) {
+        return res.status(409).json({ error: 'Error al buscar las citas del suario'});
+      }
 
-    return res.status(200).json({ items: appointments.filter((a) => {
-      return moment.parseZone(a.date).isAfter(moment())
-    }) });
-  });
+      return res.status(200).json({ items: appointments.filter((a) => {
+        return moment.parseZone(a.date).isAfter(moment())
+      }) });
+    });
 };
   
 module.exports.getCalendar = function(req, res) {
   User.findById(req.query.userId, (err, user) => {
     if (err) {
-      return res.status(409).json({ errors: { msg: 'No user found for this ID' }});
+      return res.status(409).json({ error: 'Error al buscar las citas del usuario'});
     }
 
     Appointment.find({ nutritionist: user.nutritionist }, (err, appointments) => {
       if (err) {
-        return res.status(409).json({ errors: { msg: 'No appointments found for this nutritionist' }});
+        return res.status(409).json({ error: 'Error al buscar el calendario del nutricionista'});
       }
 
       const calendar = getFlatCalendar();
@@ -84,7 +89,7 @@ module.exports.getCalendar = function(req, res) {
 module.exports.create = function(req, res, next) {
   User.findById(req.body.customer, (err, user) => {
     if (err) {
-      res.status(409).json({ errors: { msg: 'No user found for this ID' }});
+      res.status(409).json({ error: 'Error al buscar el cliente de la cita' });
       return next(err);
     }
 
@@ -97,14 +102,14 @@ module.exports.create = function(req, res, next) {
 
     new Appointment(appointment).save().then((appointment) => {
       res.status(200).json({ appointment });
-    }).catch((err) => res.status(409).json({ errors: { msg: `Can not create appointment: ${err}` } }));
+    }).catch(() => res.status(409).json({ error: 'Error al reservar la cita' }));
   });
 };
 
 module.exports.modify = function(req, res, next) {
   Appointment.findByIdAndUpdate(req.params.id, req.body, (err, appointment) => {
     if (err) {
-      res.status(409).json({ errors: { msg: 'No appointment could be found for this ID.' } });
+      res.status(409).json({ error: 'Error al modificar la cita' });
       return next(err);
     }
 
@@ -115,12 +120,12 @@ module.exports.modify = function(req, res, next) {
 module.exports.delete = function(req, res, next) {
   Appointment.findById(req.params.id, (err, user) => {
     if (err) {
-      res.status(409).json({ errors: { msg: 'No appointment found with this ID' } });
+      res.status(409).json({ error: 'Error al borrar la cita' });
       return next(err);
     }
     user.remove((err) => {
       if (err) {
-        res.status(409).json({ errors: { msg: 'Can not delete appointment' } });
+        res.status(409).json({ error: 'Error al borrar la cita' });
         return next(err);
       }
 
