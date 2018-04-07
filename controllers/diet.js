@@ -3,7 +3,6 @@ const User              = require('../models/user');
 const MailController    = require('./mail');
 const mongoose          = require('mongoose');
 
-
 module.exports.get = function(req, res) {
   Diet.aggregate([
     { $lookup: { from: 'users', localField: 'customer', foreignField: '_id', as: 'customer_data' } },
@@ -11,7 +10,7 @@ module.exports.get = function(req, res) {
     { $sort: { createdAt: -1 } }])
     .exec((err, diets) => {
       if (err) {
-        return res.status(409).json({ errors: 'No diet found fot this user' });
+        return res.status(409).json({ error: 'Error al buscar las dietas del cliente' });
       }
 
       return res.status(200).json({ diets });
@@ -24,7 +23,7 @@ module.exports.create = function(req, res, next) {
   newDiet.save().then((diet) => {
     User.findById(req.body.client, (err, user) => {
       if (err) {
-        res.status(409).json({ errors: { msg: 'Can not afind client to send email notification' } });
+        res.status(409).json({ error: 'Error al guardar la dieta' });
         return next(err);
       }
 
@@ -40,7 +39,7 @@ module.exports.create = function(req, res, next) {
 module.exports.modify = function(req, res, next) {
   Diet.findByIdAndUpdate(req.params.id, req.body.diet, (err, diet) => {
     if (err) {
-      res.status(409).json({ errors: { msg: 'No diet could be found for this ID.' } });
+      res.status(409).json({ error: 'Error al modificar la dieta' });
       return next(err);
     }
 
@@ -51,12 +50,12 @@ module.exports.modify = function(req, res, next) {
 module.exports.delete = function(req, res, next) {
   Diet.findById(req.params.id, (err, diet) => {
     if (err) {
-      res.status(409).json({ errors: { msg: 'No diet found with this ID' } });
+      res.status(409).json({ error: 'Error al borrar la dieta' });
       return next(err);
     }
     diet.remove((err) => {
       if (err) {
-        res.status(409).json({ errors: { msg: 'Can not delete diet' } });
+        res.status(409).json({ error: 'Error al borrar la dieta' });
         return next(err);
       }
 
