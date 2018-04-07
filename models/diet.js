@@ -10,13 +10,15 @@ const DietSchema = new Schema({
     type: String,
     required: true
   },
-  client: {
-    type: String,
-    required: true
+  customer: {
+    type: Schema.Types.ObjectId,
+    required: true,
+    ref: 'User'
   },
   nutritionist: {
-    type: String,
-    required: true
+    type: Schema.Types.ObjectId,
+    required: true,
+    ref: 'User'
   },
   fromDate: {
     type: Date,

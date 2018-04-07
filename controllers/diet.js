@@ -1,15 +1,21 @@
-const Diet                      = require('../models/diet');
-const User                      = require('../models/user');
-const MailController            = require('./mail');
+const Diet              = require('../models/diet');
+const User              = require('../models/user');
+const MailController    = require('./mail');
+const mongoose          = require('mongoose');
+
 
 module.exports.get = function(req, res) {
-  Diet.find({ client: req.query.userId }, (err, diets) => {
-    if (err) {
-      return res.status(409).json({ errors: 'No diet found fot this user' });
-    }
+  Diet.aggregate([
+    { $lookup: { from: 'users', localField: 'customer', foreignField: '_id', as: 'customer_data' } },
+    { $match: { customer: mongoose.Types.ObjectId(req.query.userId) } },
+    { $sort: { createdAt: -1 } }])
+    .exec((err, diets) => {
+      if (err) {
+        return res.status(409).json({ errors: 'No diet found fot this user' });
+      }
 
-    return res.status(200).json({ diets });
-  });
+      return res.status(200).json({ diets });
+    });
 };
 
 module.exports.create = function(req, res, next) {
