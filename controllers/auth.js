@@ -28,7 +28,14 @@ module.exports.userAuth = function(req, res) {
 };
 
 module.exports.refreshToken =  function(req, res) {
-  const decoded = passport.verifyToken(req.body.refreshToken);
+  let decoded;
+
+  try {
+    decoded = passport.verifyToken(req.body.refreshToken);
+  } catch (error) {
+    return res.status(500).json({ error });
+  }
+
 
   User.findById(decoded.id).then((user) => {
     if (!user) {
