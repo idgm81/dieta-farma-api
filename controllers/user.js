@@ -65,7 +65,7 @@ module.exports.modify = function(req, res) {
       res.status(409).json({ error: 'No se ha podido actualizar los datos de este usuario' });
     }
 
-    return res.status(200).json({ user });
+    return res.status(204).end();
   });
 };
 
