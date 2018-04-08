@@ -33,7 +33,7 @@ module.exports.refreshToken =  function(req, res) {
   try {
     decoded = passport.verifyToken(req.body.refreshToken);
   } catch (error) {
-    return res.status(500).json({ error });
+    return res.status(403).json({ error });
   }
 
 
