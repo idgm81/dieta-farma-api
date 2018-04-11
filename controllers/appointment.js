@@ -9,6 +9,9 @@ module.exports.get = function(req, res) {
     { $match: { $or: [{ customer: mongoose.Types.ObjectId(req.query.userId) }, { nutritionist: mongoose.Types.ObjectId(req.query.userId) }] } },
     { $sort: { createdAt: -1 } }])
     .exec((err, appointments) => {
+
+      console.log('<<<<< get appointment', appointments);
+
       if (err) {
         return res.status(409).json({ error: 'Error al buscar las citas del suario'});
       }
@@ -100,7 +103,11 @@ module.exports.create = function(req, res, next) {
       date: req.body.date
     };
 
+    console.log('>>>>> post appointment', appointment);
+
     new Appointment(appointment).save().then((appointment) => {
+      console.log('<<<<< post appointment', appointment);
+
       res.status(200).json({ appointment });
     }).catch(() => res.status(409).json({ error: 'Error al reservar la cita' }));
   });
