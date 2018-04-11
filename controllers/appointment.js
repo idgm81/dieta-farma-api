@@ -40,8 +40,7 @@ module.exports.getCalendar = function(req, res) {
 
       function parseAppointments(appointments) {
         return appointments.map((cita) => {
-          console.log('>>>>parseAppointments', cita.date);
-          console.log('>>>>parseAppointments parsezone',  moment.parseZone(cita.date).format('YYYY-MM-DD HH:mm'));
+          console.log('>>>>parseAppointments parsezone',  moment(cita.date).format('YYYY-MM-DD HH:mm'));
 
           return moment.parseZone(cita.date).format('YYYY-MM-DD HH:mm');
         });
