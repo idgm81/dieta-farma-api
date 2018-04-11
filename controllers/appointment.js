@@ -39,7 +39,12 @@ module.exports.getCalendar = function(req, res) {
       return res.status(200).json({ items: formatCalendar(availables) });
 
       function parseAppointments(appointments) {
-        return appointments.map((cita) => moment.parseZone(cita.date).format('YYYY-MM-DD HH:mm'))
+        return appointments.map((cita) => {
+          console.log('>>>>parseAppointments', cita.date);
+          console.log('>>>>parseAppointments parsezone',  moment.parseZone(cita.date).format('YYYY-MM-DD HH:mm'));
+
+          return moment.parseZone(cita.date).format('YYYY-MM-DD HH:mm');
+        });
       }
 
       function getFlatCalendar() {
