@@ -9,15 +9,12 @@ module.exports.get = function(req, res) {
     { $match: { $or: [{ customer: mongoose.Types.ObjectId(req.query.userId) }, { nutritionist: mongoose.Types.ObjectId(req.query.userId) }] } },
     { $sort: { createdAt: -1 } }])
     .exec((err, appointments) => {
-
-      console.log('<<<<< get appointment', appointments);
-
       if (err) {
         return res.status(409).json({ error: 'Error al buscar las citas del suario'});
       }
 
       return res.status(200).json({ items: appointments.filter((a) => {
-        return moment.parseZone(a.date).isAfter(moment())
+        return moment(a.date).isAfter(moment())
       }) });
     });
 };
@@ -28,21 +25,22 @@ module.exports.getCalendar = function(req, res) {
       return res.status(409).json({ error: 'Error al buscar las citas del usuario'});
     }
 
-    Appointment.find({ nutritionist: user.nutritionist }, (err, appointments) => {
+    Appointment.find({ nutritionist: user.nutritionist }, (err, nutritionistDates) => {
       if (err) {
         return res.status(409).json({ error: 'Error al buscar el calendario del nutricionista'});
       }
 
       const calendar = getFlatCalendar();
-      const availables = calendar.filter((date) => !parseAppointments(appointments).includes(date));
+      const parseNutritionistDates = parseAppointments(nutritionistDates);
+      const availableDates = calendar.filter((date) => !parseNutritionistDates.includes(date));
 
-      return res.status(200).json({ items: formatCalendar(availables) });
+      return res.status(200).json({ items: formatCalendar(availableDates) });
 
       function parseAppointments(appointments) {
-        return appointments.map((cita) => {
-          console.log('>>>>parseAppointments parsezone',  moment(cita.date).format('YYYY-MM-DD HH:mm'));
+        return appointments.map((item) => {
+          const isoDate = moment(item.date).toISOString(); //moment.ISO_8601
 
-          return moment.parseZone(cita.date).format('YYYY-MM-DD HH:mm');
+          return moment(isoDate).format('YYYY-MM-DD HH:mm');
         });
       }
 
