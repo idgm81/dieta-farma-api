@@ -105,11 +105,7 @@ module.exports.create = function(req, res, next) {
       date: req.body.date
     };
 
-    console.log('>>>>> post appointment', appointment);
-
     new Appointment(appointment).save().then((appointment) => {
-      console.log('<<<<< post appointment', appointment);
-
       res.status(200).json({ appointment });
     }).catch(() => res.status(409).json({ error: 'Error al reservar la cita' }));
   });
