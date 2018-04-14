@@ -38,7 +38,7 @@ module.exports.getCalendar = function(req, res) {
 
       function parseAppointments(appointments) {
         return appointments.map((item) => {
-          const isoDate = moment(item.date).toISOString(); //moment.ISO_8601
+          const isoDate = moment(item.date).toISOString(true); //moment.ISO_8601
 
           return moment(isoDate).format('YYYY-MM-DD HH:mm');
         });
