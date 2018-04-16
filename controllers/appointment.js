@@ -38,7 +38,7 @@ module.exports.getCalendar = function(req, res) {
 
       function parseAppointments(appointments) {
         return appointments.map((item) => {
-          return moment.parseZone(item.date).format('YYYY-MM-DD HH:mm');
+          return moment(item.date).utc().format('YYYY-MM-DD HH:mm');
         });
       }
 
