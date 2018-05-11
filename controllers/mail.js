@@ -1,7 +1,7 @@
 const nodemailer      = require('nodemailer');
 const mailerhbs       = require('nodemailer-express-handlebars');
 const { smtpConfig }  = require('../config/mail');
-
+const moment          = require('moment');
 
 module.exports.sendEmail = function(user) {
   const smtpTransport = nodemailer.createTransport(smtpConfig);
@@ -101,6 +101,26 @@ module.exports.sendDietNotification = function(user) {
       header: `Estimado ${user.profile.name}`,
       body: 'Tu nutricionista online ha puesto a tu disposición en la plataforma un nuevo documento. Para descargarlo diríjete a https://dieta-farma-online.herokuapp.com/login e introduce tu usuario y contraseña para acceder a la aplicación.\nEn caso de no poder acceder envía un correo a info@dietafarma.es exponiendo tu problema de acceso. Si puedes verlo pero te surgen dudas sobre el documento o de cómo realizar algunos aspectos (en el caso de tratarse de una dieta personalizada), escribe tu duda en el apartado “Mensajes” de la plataforma.\nRecibe un cordial saludo'
     }
+  };
+
+  smtpTransport.sendMail(mailOptions, function(err, info) {
+    if (err) {
+      console.log(err);
+      return smtpTransport.close();
+    }
+
+    console.log('Message sent: %s', info.messageId);
+    return smtpTransport.close();
+  });
+};
+
+module.exports.sendAppointmentNotification = function(appointment) {
+  const smtpTransport = nodemailer.createTransport(smtpConfig);
+  const mailOptions = {
+    to: 'jorgebaztan@dietafarma.es',
+    from: 'citas@dietafarma.es',
+    subject: 'DietaFarma Online: Nueva cita',
+    text: `Hola Jorge, tienes una cita el próximo ${moment(appointment.date).utc().format('DD/MM/YYYY [a las] HH:mm')}`
   };
 
   smtpTransport.sendMail(mailOptions, function(err, info) {

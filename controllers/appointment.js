@@ -1,7 +1,8 @@
-const Appointment   = require('../models/appointment');
-const User          = require('../models/user');
-const moment        = require('moment');
-const mongoose      = require('mongoose');
+const Appointment     = require('../models/appointment');
+const User            = require('../models/user');
+const MailController  = require('./mail');
+const moment          = require('moment');
+const mongoose        = require('mongoose');
 
 module.exports.get = function(req, res) {
   Appointment.aggregate([
@@ -104,6 +105,8 @@ module.exports.create = function(req, res, next) {
     };
 
     new Appointment(appointment).save().then((appointment) => {
+      MailController.sendAppointmentNotification(appointment);
+
       res.status(200).json({ appointment });
     }).catch(() => res.status(409).json({ error: 'Error al reservar la cita' }));
   });
