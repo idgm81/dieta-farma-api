@@ -95,7 +95,7 @@ apiRoutes.put('/users/:id', passport.authenticate(), UserController.modify);
   //= ========================
 */
 
-// Get nutriotionist appointments route (GET http://localhost:4500/api/appointments/calendar)
+// Get nutritionist appointments route (GET http://localhost:4500/api/appointments/calendar)
 apiRoutes.get('/appointments/calendar', passport.authenticate(), AppointmentController.getCalendar);
 
 // Get appointments route (GET http://localhost:4500/api/appointments?userId=)

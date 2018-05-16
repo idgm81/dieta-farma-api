@@ -23,7 +23,7 @@ module.exports.create = function(req, res, next) {
     // If email is unique and password was provided, we create new user
     const newUser = new User(req.body);
 
-    newUser.set('nutriotionist', defaultNutritionist);
+    newUser.set('nutritionist', defaultNutritionist);
     newUser.save().then((user) => {
       MailController.sendEmail(user);
       MailController.sendConfirmRegistration(user);
