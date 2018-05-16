@@ -140,6 +140,9 @@ apiRoutes.get('/diets', passport.authenticate(), DietController.get);
 // Create diet route (POST http://localhost:4500/api/diets)
 apiRoutes.post('/diets', passport.authenticate(), DietController.create);
 
+// Request new diet route (POST http://localhost:4500/api/request-diet)
+apiRoutes.post('/request-diet', passport.authenticate(), DietController.request);
+
 // Modify user diets route (PUT http://localhost:4500/api/diets/:id)
 apiRoutes.put('/diets/:id', passport.authenticate(), DietController.modify);
 
