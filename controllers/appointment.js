@@ -105,7 +105,7 @@ module.exports.create = function(req, res, next) {
     };
 
     new Appointment(appointment).save().then((appointment) => {
-      MailController.sendAppointmentNotification(appointment);
+      MailController.sendAppointmentNotification(user, appointment);
 
       res.status(200).json({ appointment });
     }).catch(() => res.status(409).json({ error: 'Error al reservar la cita' }));
