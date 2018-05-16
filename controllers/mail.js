@@ -120,7 +120,7 @@ module.exports.sendAppointmentNotification = function(appointment) {
     to: 'jorgebaztan@dietafarma.es',
     from: 'citas@dietafarma.es',
     subject: 'DietaFarma Online: Nueva cita',
-    text: `Hola Jorge, tienes una cita el próximo ${moment(appointment.date).utc().format('DD/MM/YYYY [a las] HH:mm')}`
+    text: `Hola Jorge, tienes una cita ${appointment.type === 'P' ? 'presencial' : 'via skype'} el próximo ${moment(appointment.date).utc().format('DD/MM/YYYY [a las] HH:mm')}`
   };
 
   smtpTransport.sendMail(mailOptions, function(err, info) {
