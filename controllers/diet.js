@@ -21,7 +21,7 @@ module.exports.create = function(req, res, next) {
   const newDiet = new Diet(req.body);
 
   newDiet.save().then((diet) => {
-    User.findById(req.body.client, (err, user) => {
+    User.findById(req.body.customer, (err, user) => {
       if (err) {
         res.status(409).json({ error: 'Error al guardar la dieta' });
         return next(err);
