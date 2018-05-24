@@ -1,5 +1,7 @@
 const MailController  = require('./mail');
 const User            = require('../models/user');
+const mongoose        = require('mongoose');
+
 
 module.exports.create = function(req, res, next) {
   // Return error if no email provided
@@ -19,19 +21,21 @@ module.exports.create = function(req, res, next) {
     }
 
     let defaultNutritionist = '';
-    User.find({ role: 'N'}).then((nutritionist) => { defaultNutritionist = nutritionist._id });
-    // If email is unique and password was provided, we create new user
-    const newUser = new User(req.body);
+    User.find({ role: 'N'}).then((nutritionist) => { 
+      // If email is unique and password was provided, we create new user
 
-    newUser.set('nutritionist', defaultNutritionist);
-    newUser.save().then((user) => {
-      MailController.sendEmail(user);
-      MailController.sendConfirmRegistration(user);
+      const newUser = new User(req.body);
 
-      return res.status(200).json({ user: { _id: user._id }});
-    }).catch((err) => {
-      return next(err);
-    });
+      newUser.set('nutritionist', mongoose.Types.ObjectId(nutritionist._id));
+      newUser.save().then((user) => {
+        MailController.sendEmail(user);
+        MailController.sendConfirmRegistration(user);
+
+        return res.status(200).json({ user: { _id: user._id }});
+      }).catch((err) => {
+        return next(err);
+      });
+    }).catch((err) => next(err));
   }).catch((err) => next(err));
 };
 
