@@ -37,7 +37,9 @@ module.exports.create = function(req, res) {
       });
 
       return newThread.save().then((thread) => {
-        MailController.sendMessageNotification(userFrom, userTo, thread);
+        if (userFrom.role === 'N') {
+          MailController.sendMessageNotification(userFrom, userTo);
+        }
 
         return res.status(204).json({ _id: thread._id });
       }).catch(() => {
@@ -53,19 +55,29 @@ module.exports.create = function(req, res) {
 
 module.exports.modify = function(req, res) {
   Thread.findById(req.params.id).then((thread) => {
-    const newThreadMessage = {
-      author: req.body.author,
+    const author = req.body.author;
+    const message = {
+      author,
       date: moment().parseZone(),
       text: req.body.text
     };
 
     return thread.update({
-      $push: { messages: newThreadMessage },
+      $push: { messages: message },
       $set: { unread: false } })
-      .then(() => res.status(204).end())
-      .catch(() => res.status(409).json({ error: 'Error al enviar el mensaje' }))
-  }).catch(() => res.status(409).json({ error: 'Conversación no encontrada' }));
+      .then(() => User.findById(author))
+      .then((userFrom) => {
+        if (userFrom.role === 'N') {
+          return User.findById(thread.customer).then((userTo) => {
+            MailController.sendMessageNotification(userFrom, userTo);
 
+            return res.status(204).end();
+          });
+        }
+
+        return res.status(204).end();
+      }).catch(() => res.status(409).json({ error: 'Error al enviar el mensaje' }))
+  }).catch(() => res.status(409).json({ error: 'Conversación no encontrada' }));
 };
 
 module.exports.delete = function(req, res, next) {

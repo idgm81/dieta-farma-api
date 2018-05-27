@@ -214,7 +214,7 @@ module.exports.sendMessageNotification = function(from, to) {
     context: {
       title: 'DietaFarma Online: Nuevo mensaje de tu nutricionista',
       header: `Estimado ${to.profile.name}`,
-      body: 'Tu nutricionista online ha contestado a tu último mensaje. Para leerlo diríjete a https://dieta-farma-online.herokuapp.com/login e introduce tu usuario y contraseña para acceder a la aplicación.\nuRecibe un cordial saludo'
+      body: 'Tu nutricionista online te ha escrito un nuevo mensaje. Para leerlo diríjete a https://dieta-farma-online.herokuapp.com/login e introduce tu usuario y contraseña para acceder a la aplicación.\nRecibe un cordial saludo'
     }
   };
 
