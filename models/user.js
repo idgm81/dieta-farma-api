@@ -24,6 +24,10 @@ const UserSchema = new Schema({
   },
   nutritionist: Schema.Types.ObjectId,
   profile: {
+    isPremium: {
+      type: Boolean,
+      default: false
+    },
     name: {
       type: String,
       required: true
