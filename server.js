@@ -88,6 +88,9 @@ apiRoutes.post('/users', UserController.create);
 // Modify user route (PUT http://localhost:4500/api/users/:id)
 apiRoutes.put('/users/:id', passport.authenticate(), UserController.modify);
 
+// Delte user route (DELETE http://localhost:4500/api/users/:id)
+apiRoutes.delete('/users/:id', passport.authenticate(), UserController.delete);
+
 
 /**
   //= ========================
