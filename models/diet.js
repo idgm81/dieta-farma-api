@@ -12,7 +12,7 @@ const DietSchema = new Schema({
   },
   type:  {
     type: String,
-    enum: [ 'diet', 'document' ],
+    enum: [ 'D', 'P' ],
     required: true
   },
   customer: {
