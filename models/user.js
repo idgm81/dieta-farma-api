@@ -24,10 +24,6 @@ const UserSchema = new Schema({
   },
   nutritionist: Schema.Types.ObjectId,
   profile: {
-    isPremium: {
-      type: Boolean,
-      default: false
-    },
     name: {
       type: String,
       required: true
@@ -40,6 +36,14 @@ const UserSchema = new Schema({
       type: String,
       enum: [ 'male', 'female' ],
       required: true
+    },
+    credits: {
+      type: Number,
+      default: 0
+    },
+    isPremium: {
+      type: Boolean,
+      default: false
     },
     avatar: {
       type: String

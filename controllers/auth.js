@@ -16,7 +16,11 @@ module.exports.userAuth = function(req, res) {
       user.comparePassword(password, function (err, isMatch) {
         if (isMatch && !err) {
           // return the information including token as JSON
-          const token = passport.generateToken({ id: user._id, role: user.role});
+          const token = passport.generateToken({
+            id: user._id,
+            role: user.role,
+            isPremium: user.profile.isPremium
+          });
 
           res.status(200).json(token);
         } else {
@@ -42,7 +46,11 @@ module.exports.refreshToken =  function(req, res) {
       return res.status(401).json({ error: 'Usuario no econtrado' });
     } 
     
-    const token = passport.generateToken({ id: user._id, role: user.role});
+    const token = passport.generateToken({
+      id: user._id,
+      role: user.role,
+      isPremium: user.profile.isPremium
+    });
   
     return res.status(200).json(token);
   });

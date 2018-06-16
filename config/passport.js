@@ -31,6 +31,7 @@ module.exports = function() {
     });
   });
   passport.use(strategy);
+
   return {
     generateToken: function(payload) {
       const token = jwToken.sign(payload, config.secret, { expiresIn: config.expirationTime });
@@ -39,6 +40,7 @@ module.exports = function() {
       return {
         id: payload.id,
         role: payload.role,
+        isPremium: payload.isPremium,
         token,
         exp: config.expirationTime,
         refreshToken
