@@ -10,6 +10,11 @@ const DietSchema = new Schema({
     type: String,
     required: true
   },
+  type:  {
+    type: String,
+    enum: [ 'diet', 'document' ],
+    required: true
+  },
   customer: {
     type: Schema.Types.ObjectId,
     required: true,
