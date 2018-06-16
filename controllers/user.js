@@ -20,7 +20,6 @@ module.exports.create = function(req, res, next) {
       return res.status(409).send({ errors: { msg: 'Ya existe un usuario registrado con ese email' } });
     }
 
-    let defaultNutritionist = '';
     User.find({ role: 'N'}).then((nutritionist) => { 
       // If email is unique and password was provided, we create new user
 

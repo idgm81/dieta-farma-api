@@ -23,6 +23,7 @@ const AppointmentController     = require('./controllers/appointment');
 const ThreadController          = require('./controllers/thread');
 const DietController            = require('./controllers/diet');
 const S3Controller              = require('./controllers/s3');
+const PurchaseController        = require('./controllers/purchase');
 
 // set up our express application
 
@@ -91,7 +92,6 @@ apiRoutes.put('/users/:id', passport.authenticate(), UserController.modify);
 // Delte user route (DELETE http://localhost:4500/api/users/:id)
 apiRoutes.delete('/users/:id', passport.authenticate(), UserController.delete);
 
-
 /**
   //= ========================
   // Appointments Routes
@@ -154,6 +154,22 @@ apiRoutes.delete('/diets/:id', passport.authenticate(), DietController.delete);
 
 // Upload files to S3
 apiRoutes.post('/signed-request', S3Controller.getUrl);
+
+/**
+  //= ========================
+  // Purchases Routes
+  //= ========================
+*/
+
+// Get purchases route (GET http://localhost:4500/api/purchases?userId=)
+apiRoutes.get('/purchases', passport.authenticate(), PurchaseController.get);
+
+// Create new purchase route (POST http://localhost:4500/api/purchases
+apiRoutes.post('/purchases', passport.authenticate(), PurchaseController.create);
+
+// Delete purchase route (DELETE http://localhost:4500/api/purchases/:id)
+apiRoutes.delete('/purchases/:id', passport.authenticate(), PurchaseController.delete);
+
 
 // View user profile route
 // userRoutes.get('/home', requireAuth, AuthenticationController.roleAuthorization(roles.ROLE_CLIENT), UserController.getUserProfile);
