@@ -16,7 +16,7 @@ module.exports.create = function(req, res, next) {
   const newPurchase = new Purchase(req.body);
 
   newPurchase.save().then((purchase) => {
-    User.findByIdAndUpdate(req.body.customer, { isPremium: true }, { $inc: { 'profile.credits': 1}} , (err, user) => {
+    User.findByIdAndUpdate(req.body.customer, { $set: { isPremium: true }, $inc: { 'profile.credits': 1 } } , (err, user) => {
       if (err) {
         res.status(409).json({ error: 'Error al guardar la compra' });
         return next(err);
@@ -30,12 +30,12 @@ module.exports.create = function(req, res, next) {
 };
 
 module.exports.delete = function(req, res, next) {
-  Purchase.findById(req.params.id, (err, diet) => {
+  Purchase.findById(req.params.id, (err, purchase) => {
     if (err) {
       res.status(409).json({ error: 'Error al borrar la compra' });
       return next(err);
     }
-    diet.remove((err) => {
+    purchase.remove((err) => {
       if (err) {
         res.status(409).json({ error: 'Error al borrar la compra' });
         return next(err);
