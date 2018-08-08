@@ -86,6 +86,9 @@ apiRoutes.get('/users/:id', passport.authenticate(), UserController.get);
 // Create new user route (POST http://localhost:4500/api/users)
 apiRoutes.post('/users', UserController.create);
 
+// Request new diet route (POST http://localhost:4500/api/users-advance)
+apiRoutes.post('/users-advance', passport.authenticate(), UserController.advance);
+
 // Modify user route (PUT http://localhost:4500/api/users/:id)
 apiRoutes.put('/users/:id', passport.authenticate(), UserController.modify);
 
@@ -143,9 +146,6 @@ apiRoutes.get('/diets', passport.authenticate(), DietController.get);
 // Create diet route (POST http://localhost:4500/api/diets)
 apiRoutes.post('/diets', passport.authenticate(), DietController.create);
 
-// Request new diet route (POST http://localhost:4500/api/request-diet)
-apiRoutes.post('/request-diet', passport.authenticate(), DietController.request);
-
 // Modify user diets route (PUT http://localhost:4500/api/diets/:id)
 apiRoutes.put('/diets/:id', passport.authenticate(), DietController.modify);
 
@@ -162,13 +162,13 @@ apiRoutes.post('/signed-request', S3Controller.getUrl);
 */
 
 // Get purchases route (GET http://localhost:4500/api/purchases?userId=)
-apiRoutes.get('/purchases', passport.authenticate(), PurchaseController.get);
+// apiRoutes.get('/purchases', passport.authenticate(), PurchaseController.get);
 
 // Create new purchase route (POST http://localhost:4500/api/purchases
 apiRoutes.post('/purchases', passport.authenticate(), PurchaseController.create);
 
 // Delete purchase route (DELETE http://localhost:4500/api/purchases/:id)
-apiRoutes.delete('/purchases/:id', passport.authenticate(), PurchaseController.delete);
+// apiRoutes.delete('/purchases/:id', passport.authenticate(), PurchaseController.delete);
 
 
 // View user profile route

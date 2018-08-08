@@ -114,7 +114,7 @@ module.exports.sendDietNotification = function(user) {
   });
 };
 
-module.exports.sendRequestNewDietNotification = function(user, data) {
+module.exports.sendNewDietQuestionsNotification = function(user, data) {
   const smtpTransport = nodemailer.createTransport(smtpConfig);
   smtpTransport.use('compile', mailerhbs({
     viewPath: './public/assets', //Path to email template folder

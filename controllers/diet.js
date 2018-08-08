@@ -36,16 +36,6 @@ module.exports.create = function(req, res, next) {
   });
 };
 
-module.exports.request = function(req, res, next) {
-  User.findById(req.body.customer, (err, user) => {
-    MailController.sendRequestNewDietNotification(user, req.body);
-
-    return res.status(204).end();
-  }).catch((error) => {
-    return res.status(500).json({ error: 'Error al pedir una nueva dieta' });
-  });
-};
-
 module.exports.modify = function(req, res, next) {
   Diet.findByIdAndUpdate(req.params.id, req.body.diet, (err, diet) => {
     if (err) {

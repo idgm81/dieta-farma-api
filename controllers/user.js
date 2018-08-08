@@ -88,3 +88,13 @@ module.exports.delete = function(req, res, next) {
     });
   });
 };
+
+module.exports.advance = function(req, res) {
+  User.findById(req.body.customer, (err, user) => {
+    MailController.sendNewDietQuestionsNotification(user, req.body.questions);
+
+    return res.status(204).end();
+  }).catch(() => {
+    return res.status(500).json({ error: 'Error al enviar respuestas del nuevo formulario' });
+  });
+};

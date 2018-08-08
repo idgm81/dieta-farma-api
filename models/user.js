@@ -41,19 +41,19 @@ const UserSchema = new Schema({
       type: Number,
       default: 0
     },
-    isPremium: {
-      type: Boolean,
-      default: false
-    },
     avatar: {
       type: String
     },
     birthday: {
       type: Date,
-      required: false
+      required: true
     },
     phone: {
       type: String,
+    },
+    level: {
+      type: Number,
+      default: 0
     },
     measures: {
       height: String,
@@ -153,6 +153,10 @@ const UserSchema = new Schema({
       type: Boolean,
       default: false
     }
+  },
+  profileCompleted: {
+    type: Boolean,
+    default: false
   },
   resetPasswordToken: String,
   resetPasswordExpires: Date
