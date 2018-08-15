@@ -235,7 +235,7 @@ module.exports.sendNewDietQuestionsNotification = function(user, data) {
       q11: '¿Cumpliste el objetivo de tomar 5 frutas/verduras/hortalizas diferentes al día? En caso negativo, ¿por qué?',
       a11: `R: ${data.q11}`,
       q12: 'Si tu objetivo tiene un componente deportivo, ¿lograste entrenar todos los días que te habías propuesto? En caso negativo, ¿por qué?',
-      a12: `${data.q12}`,
+      a12: `R: ${data.q12}`,
       q13: '¿Estás dispuesto a probar alimentos que nunca antes hayas probado?',
       a13: `R: ${data.q13}`,
       q14: '¿Has usado el apartado mensajes de la plataforma alguna vez? ¿Te gusta y te parece fácil de usar?',
