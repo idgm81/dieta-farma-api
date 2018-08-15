@@ -65,23 +65,21 @@ module.exports.getAll = function(req, res, next) {
 module.exports.modify = function(req, res) {
   User.findByIdAndUpdate(req.params.id, req.body, (err, user) => {
     if (err || !user) {
-      res.status(409).json({ error: 'No se ha podido actualizar los datos de este usuario' });
+      return res.status(409).json({ error: 'No se ha podido actualizar los datos de este usuario' });
     }
 
     return res.status(204).end();
   });
 };
 
-module.exports.delete = function(req, res, next) {
+module.exports.delete = function(req, res) {
   User.findById(req.params.id, (err, user) => {
     if (err) {
-      res.status(409).json({ error: 'No se ha podido recuperar los datos de este usuario' });
-      return next(err);
+      return res.status(409).json({ error: 'No se ha podido recuperar los datos de este usuario' });
     }
     user.remove((err) => {
       if (err) {
-        res.status(500).json({ error: 'No se ha podido dar de baja este usuario' });
-        return next(err);
+        return res.status(500).json({ error: 'No se ha podido dar de baja este usuario' });
       }
 
       return res.status(204).end();

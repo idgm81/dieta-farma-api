@@ -80,16 +80,14 @@ module.exports.modify = function(req, res) {
   }).catch(() => res.status(409).json({ error: 'Conversación no encontrada' }));
 };
 
-module.exports.delete = function(req, res, next) {
+module.exports.delete = function(req, res) {
   Thread.findById(req.params.id, (err, user) => {
     if (err) {
-      res.status(409).json({ error: 'Conversación no encontrada' });
-      return next(err);
+      return res.status(409).json({ error: 'Conversación no encontrada' });
     }
     user.remove((err) => {
       if (err) {
-        res.status(409).json({ error: 'Error al borrar la conversación'});
-        return next(err);
+        return res.status(409).json({ error: 'Error al borrar la conversación'});
       }
 
       return res.status(204).end();

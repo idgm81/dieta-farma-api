@@ -17,46 +17,42 @@ module.exports.get = function(req, res) {
     });
 };
 
-module.exports.create = function(req, res, next) {
+module.exports.create = function(req, res) {
   const newDiet = new Diet(req.body);
 
   newDiet.save().then((diet) => {
     User.findById(req.body.customer, (err, user) => {
       if (err) {
-        res.status(409).json({ error: 'Error al guardar la dieta' });
-        return next(err);
+        return res.status(409).json({ error: 'Error al guardar la dieta' });
       }
 
       MailController.sendDietNotification(user);
 
       return res.status(200).json({ diet });
     });
-  }).catch((err) => {
-    return next(err);
+  }).catch(() => {
+    return res.status(409).json({ error: 'Error al guardar la dieta' });
   });
 };
 
-module.exports.modify = function(req, res, next) {
+module.exports.modify = function(req, res) {
   Diet.findByIdAndUpdate(req.params.id, req.body.diet, (err, diet) => {
     if (err) {
-      res.status(409).json({ error: 'Error al modificar la dieta' });
-      return next(err);
+      return res.status(409).json({ error: 'Error al modificar la dieta' });
     }
 
     return res.status(200).json({ diet });
   });
 };
 
-module.exports.delete = function(req, res, next) {
+module.exports.delete = function(req, res) {
   Diet.findById(req.params.id, (err, diet) => {
     if (err) {
-      res.status(409).json({ error: 'Error al borrar la dieta' });
-      return next(err);
+      return res.status(409).json({ error: 'Error al borrar la dieta' });
     }
     diet.remove((err) => {
       if (err) {
-        res.status(409).json({ error: 'Error al borrar la dieta' });
-        return next(err);
+        return res.status(409).json({ error: 'Error al borrar la dieta' });
       }
 
       return res.status(204).end();
