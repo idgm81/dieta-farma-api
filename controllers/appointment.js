@@ -124,18 +124,27 @@ module.exports.modify = function(req, res, next) {
 };
 
 module.exports.delete = function(req, res, next) {
-  Appointment.findById(req.params.id, (err, user) => {
+  Appointment.findById(req.params.id, (err, appointment) => {
     if (err) {
       res.status(409).json({ error: 'Error al borrar la cita' });
       return next(err);
     }
-    user.remove((err) => {
+    appointment.remove((err) => {
       if (err) {
         res.status(409).json({ error: 'Error al borrar la cita' });
         return next(err);
       }
 
-      return res.status(204).end();
+      User.findById(appointment.customer, (err, user) => {
+        if (err) {
+          res.status(409).json({ error: 'Error al buscar el cliente de la cita' });
+          return next(err);
+        }
+
+        MailController.sendCancelAppointmentNotification(user, appointment);
+
+        return res.status(204).end();
+      });
     });
   });
 };
