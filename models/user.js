@@ -55,108 +55,106 @@ const UserSchema = new Schema({
       type: Number,
       default: 0
     },
-    measures: {
-      height: String,
-      weight: String,
-      imc: String,
-      fat: String,
-      water: String,
-      mass: String,
-      biotype: String,
-      boneMass: String,
-      metabolicExpense: String,
-      metabolicAge: String,
-      visceralFat: String,
-      segments: {
-        arm: {
-          left: {
-            fatPercentage: String,
-            mass: String
+    questionnaire: {
+      measures: {
+        height: String,
+        weight: String,
+        imc: String,
+        fat: String,
+        water: String,
+        mass: String,
+        biotype: String,
+        boneMass: String,
+        metabolicExpense: String,
+        metabolicAge: String,
+        visceralFat: String,
+        segments: {
+          arm: {
+            left: {
+              fatPercentage: String,
+              mass: String
+            },
+            right: {
+              fatPercentage: String,
+              mass: String
+            }
           },
-          right: {
+          leg: {
+            left: {
+              fatPercentage: String,
+              mass: String
+            },
+            right: {
+              fatPercentage: String,
+              mass: String
+            }
+          },
+          trunk: {
             fatPercentage: String,
             mass: String
           }
         },
-        leg: {
-          left: {
-            fatPercentage: String,
-            mass: String
-          },
-          right: {
-            fatPercentage: String,
-            mass: String
-          }
+        shapes: {
+          waist: String,
+          wrist: String,
+          hip: String,
+          arm: String,
+          leg: String,
+          chest: String
         },
-        trunk: {
-          fatPercentage: String,
-          mass: String
-        }
+        creases: {
+          bicipital: String,
+          tricipital: String,
+          subescapular: String,
+          suprailiaco: String
+        },
       },
-      shapes: {
-        waist: String,
-        wrist: String,
-        hip: String,
-        arm: String,
-        leg: String,
-        chest: String
+      objective: String,
+      reason: String,
+      foodDiseases: String,
+      foodFavourite: String,
+      foodForbidden: String,
+      dietType: String,
+      dayFruit: String,
+      dayMilk: String,
+      dayCereals: String,
+      dayProteins: String,
+      selfCook: {
+        type: Boolean,
+        default: false
       },
-      creases: {
-        bicipital: String,
-        tricipital: String,
-        subescapular: String,
-        suprailiaco: String
+      receiveDietsBefore: {
+        type: Boolean,
+        default: false
       },
-    },
-    objective: String,
-    reason: String,
-    foodDiseases: String,
-    foodFavourite: String,
-    foodForbidden: String,
-    dietType: String,
-    dayFruit: String,
-    dayMilk: String,
-    dayCereals: String,
-    dayProteins: String,
-    selfCook: {
-      type: Boolean,
-      default: false
-    },
-    receiveDietsBefore: {
-      type: Boolean,
-      default: false
-    },
-    supervisor: String,
-    supervisorDetail: String,
-    isEmployed: {
-      type: Boolean,
-      default: false
-    },
-    employmentType: String,
-    transportType: String,
-    doExercise: {
-      type: Boolean,
-      default: false
-    },
-    sportDetail: String,
-    exerciseFrecuency: String,
-    increaseActivity: {
-      type: Boolean,
-      default: false
-    },
-    injuries: String,
-    receiveTrainingInfo: {
-      type: Boolean,
-      default: false
-    },
-    receiveSupplementInfo: {
-      type: Boolean,
-      default: false
+      supervisor: String,
+      supervisorDetail: String,
+      isEmployed: {
+        type: Boolean,
+        default: false
+      },
+      employmentType: String,
+      transportType: String,
+      doExercise: {
+        type: Boolean,
+        default: false
+      },
+      sportDetail: String,
+      exerciseFrecuency: String,
+      increaseActivity: {
+        type: Boolean,
+        default: false
+      },
+      injuries: String,
+      receiveTrainingInfo: {
+        type: Boolean,
+        default: false
+      },
+      receiveSupplementInfo: {
+        type: Boolean,
+        default: false
+      }
     }
-  },
-  profileCompleted: {
-    type: Boolean,
-    default: false
   },
   resetPasswordToken: String,
   resetPasswordExpires: Date
