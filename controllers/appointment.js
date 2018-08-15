@@ -90,11 +90,10 @@ module.exports.getCalendar = function(req, res) {
   });
 };
 
-module.exports.create = function(req, res, next) {
+module.exports.create = function(req, res) {
   User.findById(req.body.customer, (err, user) => {
     if (err) {
-      res.status(409).json({ error: 'Error al buscar el cliente de la cita' });
-      return next(err);
+      return res.status(409).json({ error: 'Error al buscar el cliente de la cita' });
     }
 
     const appointment = {
@@ -112,33 +111,31 @@ module.exports.create = function(req, res, next) {
   });
 };
 
-module.exports.modify = function(req, res, next) {
+module.exports.modify = function(req, res) {
   Appointment.findByIdAndUpdate(req.params.id, req.body, (err, appointment) => {
     if (err) {
-      res.status(409).json({ error: 'Error al modificar la cita' });
-      return next(err);
+      return res.status(409).json({ error: 'Error al modificar la cita' });
     }
 
     return res.status(200).json({ appointment });
   });
 };
 
-module.exports.delete = function(req, res, next) {
+module.exports.delete = function(req, res) {
   Appointment.findById(req.params.id, (err, appointment) => {
     if (err) {
-      res.status(409).json({ error: 'Error al borrar la cita' });
-      return next(err);
+      return res.status(409).json({ error: 'Error al borrar la cita' });
     }
     appointment.remove((err) => {
       if (err) {
-        res.status(409).json({ error: 'Error al borrar la cita' });
-        return next(err);
+        return res.status(409).json({ error: 'Error al borrar la cita' });
       }
 
-      User.findById(appointment.customer, (err, user) => {
+      const credits = appointment.type === 'P' ? 3 : 2;
+
+      User.findByIdAndUpdate(appointment.customer, { $inc: { 'profile.credits' : credits }}, (err, user) => {
         if (err) {
-          res.status(409).json({ error: 'Error al buscar el cliente de la cita' });
-          return next(err);
+          return res.status(409).json({ error: 'Error al buscar el cliente de la cita' });
         }
 
         MailController.sendCancelAppointmentNotification(user, appointment);
