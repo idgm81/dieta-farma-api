@@ -5,6 +5,7 @@ module.exports.create = function(req, res) {
     source: req.body.token.id,
     receipt_email: req.body.email,
     amount: req.body.amount,
+    description: req.body.description,
     currency: 'eur',
     metadata: {
       customer_id: req.body.customer
