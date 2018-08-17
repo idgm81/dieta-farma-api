@@ -2,7 +2,7 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 module.exports.create = function(req, res) {
   stripe.charges.create({
-    source: req.body.token.id,
+    source: req.body.token,
     receipt_email: req.body.email,
     amount: req.body.amount,
     description: req.body.description,
