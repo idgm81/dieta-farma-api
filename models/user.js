@@ -55,6 +55,10 @@ const UserSchema = new Schema({
       type: Number,
       default: 0
     },
+    pendingDiet: {
+      type: Boolean,
+      default: false
+    },
     questionnaire: {
       measures: {
         height: String,

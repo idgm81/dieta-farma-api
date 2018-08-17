@@ -21,14 +21,27 @@ module.exports.create = function(req, res) {
   const newDiet = new Diet(req.body);
 
   newDiet.save().then((diet) => {
-    User.findById(req.body.customer, (err, user) => {
-      if (err) {
+    if (diet.type === 'D') {
+      User.findByIdAndUpdate(req.body.customer, { $set: { 'profile.pendingDiet': false }}).then((user) => {
+
+        MailController.sendDietNotification(user);
+
+        return res.status(200).json({ diet });
+      }).catch(() => {
+        return res.status(409).json({ error: 'Error al guardar la dieta' });
+      });
+    }
+
+    User.findById(req.body.customer).then((user) => {
+      if (!user) {
         return res.status(409).json({ error: 'Error al guardar la dieta' });
       }
 
       MailController.sendDietNotification(user);
 
       return res.status(200).json({ diet });
+    }).catch(() => {
+      return res.status(409).json({ error: 'Error al guardar la dieta' });
     });
   }).catch(() => {
     return res.status(409).json({ error: 'Error al guardar la dieta' });
@@ -47,9 +60,10 @@ module.exports.modify = function(req, res) {
 
 module.exports.delete = function(req, res) {
   Diet.findById(req.params.id, (err, diet) => {
-    if (err) {
+    if (err || !diet) {
       return res.status(409).json({ error: 'Error al borrar la dieta' });
     }
+
     diet.remove((err) => {
       if (err) {
         return res.status(409).json({ error: 'Error al borrar la dieta' });
