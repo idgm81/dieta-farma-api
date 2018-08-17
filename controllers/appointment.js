@@ -14,7 +14,7 @@ module.exports.get = function(req, res) {
         return res.status(409).json({ error: 'Error al buscar las citas del suario'});
       }
 
-      return res.status(200).json({ items: appointments.filter((a) => {
+      return res.status(200).json({ appointments: appointments.filter((a) => {
         return moment(a.date).isAfter(moment())
       }) });
     });
@@ -22,7 +22,7 @@ module.exports.get = function(req, res) {
   
 module.exports.getCalendar = function(req, res) {
   User.findById(req.query.userId, (err, user) => {
-    if (err) {
+    if (err || !user) {
       return res.status(409).json({ error: 'Error al buscar las citas del usuario'});
     }
 
@@ -35,7 +35,7 @@ module.exports.getCalendar = function(req, res) {
       const parseNutritionistDates = parseAppointments(nutritionistDates);
       const availableDates = calendar.filter((date) => !parseNutritionistDates.includes(date));
 
-      return res.status(200).json({ items: formatCalendar(availableDates) });
+      return res.status(200).json({ calendar: formatCalendar(availableDates) });
 
       function parseAppointments(appointments) {
         return appointments.map((item) => {
@@ -92,7 +92,7 @@ module.exports.getCalendar = function(req, res) {
 
 module.exports.create = function(req, res) {
   User.findById(req.body.customer, (err, user) => {
-    if (err) {
+    if (err || !user) {
       return res.status(409).json({ error: 'Error al buscar el cliente de la cita' });
     }
 
@@ -125,9 +125,10 @@ module.exports.modify = function(req, res) {
 
 module.exports.delete = function(req, res) {
   Appointment.findById(req.params.id, (err, appointment) => {
-    if (err) {
+    if (err || !appointment) {
       return res.status(409).json({ error: 'Error al borrar la cita' });
     }
+
     appointment.remove((err) => {
       if (err) {
         return res.status(409).json({ error: 'Error al borrar la cita' });

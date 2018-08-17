@@ -74,9 +74,10 @@ module.exports.modify = function(req, res) {
 
 module.exports.delete = function(req, res) {
   User.findById(req.params.id, (err, user) => {
-    if (err) {
+    if (err || !user) {
       return res.status(409).json({ error: 'No se ha podido recuperar los datos de este usuario' });
     }
+
     user.remove((err) => {
       if (err) {
         return res.status(500).json({ error: 'No se ha podido dar de baja este usuario' });
@@ -89,8 +90,8 @@ module.exports.delete = function(req, res) {
 
 module.exports.advance = function(req, res) {
   User.findById(req.body.customer, (err, user) => {
-    if (err) {
-      return res.status(500).json({ error: 'Error al enviar respuestas del nuevo formulario' });
+    if (err || !user) {
+      return res.status(409).json({ error: 'Error al enviar respuestas del nuevo formulario' });
     }
 
     MailController.sendNewDietQuestionsNotification(user, req.body.questions);

@@ -21,6 +21,10 @@ module.exports.get = function(req, res) {
 
 module.exports.create = function(req, res) {
   User.findById(req.body.from).then((userFrom) => {
+    if (!userFrom) {
+      return res.status(409).json({ error: 'Usuario destinatario no encontrado' }); 
+    }
+
     const target = userFrom.role === 'C' ? userFrom.nutritionist : req.body.to;
 
     User.findById(target).then((userTo) => {
@@ -82,9 +86,10 @@ module.exports.modify = function(req, res) {
 
 module.exports.delete = function(req, res) {
   Thread.findById(req.params.id, (err, user) => {
-    if (err) {
+    if (err || !user) {
       return res.status(409).json({ error: 'Conversación no encontrada' });
     }
+
     user.remove((err) => {
       if (err) {
         return res.status(409).json({ error: 'Error al borrar la conversación'});
