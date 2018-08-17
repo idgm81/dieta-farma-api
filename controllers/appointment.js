@@ -8,7 +8,7 @@ module.exports.get = function(req, res) {
   Appointment.aggregate([
     { $lookup: { from: 'users', localField: 'customer', foreignField: '_id', as: 'customer_data' } },
     { $match: { $or: [{ customer: mongoose.Types.ObjectId(req.query.userId) }, { nutritionist: mongoose.Types.ObjectId(req.query.userId) }] } },
-    { $sort: { createdAt: -1 } }])
+    { $sort: { date: 1 } }])
     .exec((err, appointments) => {
       if (err) {
         return res.status(409).json({ error: 'Error al buscar las citas del suario'});
