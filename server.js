@@ -1,6 +1,7 @@
 require('dotenv').config();
 
 const express                   = require('express');
+const swStats                   = require('swagger-stats');   
 const app                       = express();
 const apiRoutes                 = express.Router();
 const port                      = process.env.PORT || 4500;
@@ -33,6 +34,7 @@ app.use(bodyParser.json()); // get information from html forms
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(methodOverride());
 app.use(express.static(path.join(__dirname,'public')));
+app.use(swStats.getMiddleware({}));
 
 // enable cors
 const corsOption = {
