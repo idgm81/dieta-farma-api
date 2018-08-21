@@ -134,17 +134,21 @@ module.exports.delete = function(req, res) {
         return res.status(409).json({ error: 'Error al borrar la cita' });
       }
 
-      const credits = appointment.type === 'P' ? 3 : 2;
+      if (req.query.updateCredits) {
+        const credits = appointment.type === 'P' ? 3 : 2;
 
-      User.findByIdAndUpdate(appointment.customer, { $inc: { 'profile.credits' : credits }}, (err, user) => {
-        if (err) {
-          return res.status(409).json({ error: 'Error al buscar el cliente de la cita' });
-        }
+        User.findByIdAndUpdate(appointment.customer, { $inc: { 'profile.credits' : credits }}, (err, user) => {
+          if (err) {
+            return res.status(409).json({ error: 'Error al buscar el cliente de la cita' });
+          }
 
-        MailController.sendCancelAppointmentNotification(user, appointment);
+          MailController.sendCancelAppointmentNotification(user, appointment);
 
-        return res.status(204).end();
-      });
+          return res.status(204).end();
+        });
+      }
+
+      return res.status(204).end();
     });
   });
 };
