@@ -10,7 +10,7 @@ module.exports.userAuth = function(req, res) {
 
   User.findOne({ email }).then((user) => {
     if (!user) {
-      res.status(401).json({ error: 'Email incorrecto' });
+      res.status(401).json({ error: 'No existe ningún usuario registrado con ese email' });
     } else {
       // check if password matches
       user.comparePassword(password, function (err, isMatch) {
@@ -24,7 +24,7 @@ module.exports.userAuth = function(req, res) {
 
           res.status(200).json(token);
         } else {
-          res.status(401).json({ error: 'Contraseña incorrecta' });
+          res.status(401).json({ error: 'La contraseña introducida es incorrecta' });
         }
       });
     }
@@ -80,9 +80,8 @@ module.exports.roleAuthorization = function(requiredRole) {
 
 module.exports.checkEmail = function(req, res, next) {
   User.findOne({email: req.query.email}, (err, user) => {
-    if (err || user === null) {
-      res.status(409).json({ error: 'No user could be found for this email' });
-      return next(err);
+    if (err || !user) {
+      res.status(401).json({ error: 'No existe ningún usuario registrado con ese email' });
     }
 
     // If user is found, generate and save resetToken
@@ -125,10 +124,10 @@ module.exports.modifyPassword = function(req, res) {
 
     resetUser.save((err) => {
       if (err) {
-        return res.status(500).json({ error: 'Server error' });
+        return res.status(500).json({ error: 'No se ha podido modificar la contraseña' });
       }
 
-      return res.status(204).json({ error: 'Server error' });
+      return res.status(204).end();
     });
   });
 };
