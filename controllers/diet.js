@@ -20,7 +20,7 @@ module.exports.get = function(req, res) {
 module.exports.create = function(req, res) {
   const newDiet = new Diet(req.body);
 
-  newDiet.save().then((diet) => {
+  return newDiet.save().then((diet) => {
     if (diet.type === 'D') {
       User.findByIdAndUpdate(req.body.customer, { $set: { 'profile.pendingDiet': false }}).then((user) => {
 
@@ -32,7 +32,7 @@ module.exports.create = function(req, res) {
       });
     }
 
-    User.findById(req.body.customer).then((user) => {
+    return User.findById(req.body.customer).then((user) => {
       if (!user) {
         return res.status(409).json({ error: 'Error al guardar la dieta' });
       }

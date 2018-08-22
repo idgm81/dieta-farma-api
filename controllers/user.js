@@ -20,13 +20,14 @@ module.exports.create = function(req, res, next) {
       return res.status(409).send({ errors: { msg: 'Ya existe un usuario registrado con ese email' } });
     }
 
-    User.find({ role: 'N'}).then((nutritionist) => { 
+    return User.find({ role: 'N'}).then((nutritionist) => { 
       // If email is unique and password was provided, we create new user
 
       const newUser = new User(req.body);
 
       newUser.set('nutritionist', mongoose.Types.ObjectId(nutritionist._id));
-      newUser.save().then((user) => {
+
+      return newUser.save().then((user) => {
         MailController.sendEmail(user);
         MailController.sendConfirmRegistration(user);
 

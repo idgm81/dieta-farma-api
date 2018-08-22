@@ -20,14 +20,14 @@ module.exports.get = function(req, res) {
 };
 
 module.exports.create = function(req, res) {
-  User.findById(req.body.from).then((userFrom) => {
+  return User.findById(req.body.from).then((userFrom) => {
     if (!userFrom) {
       return res.status(409).json({ error: 'Usuario destinatario no encontrado' }); 
     }
 
     const target = userFrom.role === 'C' ? userFrom.nutritionist : req.body.to;
 
-    User.findById(target).then((userTo) => {
+    return User.findById(target).then((userTo) => {
       const newThread = new Thread({
         nutritionist: userFrom.role === 'N' ? userFrom._id : userTo._id,
         customer: userFrom.role === 'N' ? userTo._id : userFrom._id,
