@@ -41,9 +41,7 @@ module.exports.create = function(req, res) {
       });
 
       return newThread.save().then((thread) => {
-        if (userFrom.role === 'N') {
-          MailController.sendMessageNotification(userFrom, userTo);
-        }
+        MailController.sendMessageNotification(userFrom, userTo);
 
         return res.status(204).json({ _id: thread._id });
       }).catch(() => {
@@ -71,15 +69,11 @@ module.exports.modify = function(req, res) {
       $set: { unread: false } })
       .then(() => User.findById(author))
       .then((userFrom) => {
-        if (userFrom.role === 'N') {
-          return User.findById(thread.customer).then((userTo) => {
-            MailController.sendMessageNotification(userFrom, userTo);
+        return User.findById(thread.customer).then((userTo) => {
+          MailController.sendMessageNotification(userFrom, userTo);
 
-            return res.status(204).end();
-          });
-        }
-
-        return res.status(204).end();
+          return res.status(204).end();
+        })
       }).catch(() => res.status(409).json({ error: 'Error al enviar el mensaje' }))
   }).catch(() => res.status(409).json({ error: 'Conversación no encontrada' }));
 };

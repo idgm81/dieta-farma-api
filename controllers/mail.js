@@ -372,12 +372,12 @@ module.exports.sendMessageNotification = function(from, to) {
   const mailOptions = {
     to: to.email,
     from: from.email,
-    subject: 'DietaFarma Online: Nuevo mensaje de tu nutricionista',
+    subject: 'DietaFarma Online: Tienes un nuevo mensaje',
     template: 'email',
     context: {
-      title: 'DietaFarma Online: Nuevo mensaje de tu nutricionista',
-      header: `Estimado ${to.profile.name}`,
-      body: 'Tu nutricionista online te ha escrito un nuevo mensaje. Para leerlo diríjete a https://dieta-farma-online.herokuapp.com/login e introduce tu usuario y contraseña para acceder a la aplicación.\nRecibe un cordial saludo'
+      title: 'DietaFarma Online: Tienes un nuevo mensaje',
+      header: `Hola ${to.profile.name}`,
+      body: 'Has recibido un nuevo mensaje. Para leerlo diríjete a https://dieta-farma-online.herokuapp.com/login e introduce tu usuario y contraseña para acceder a la aplicación.\nRecibe un cordial saludo'
     }
   };
 
