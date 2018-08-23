@@ -6,18 +6,18 @@ const mongoose        = require('mongoose');
 module.exports.create = function(req, res, next) {
   // Return error if no email provided
   if (!req.body.email) {
-    return res.status(400).send({ errors: { msg: 'Debes introducir una dirección de email válida' } });
+    return res.status(400).send({ error: 'Debes introducir una dirección de email válida' });
   }
 
   // Return error if no password provided
   if (!req.body.password) {
-    return res.status(400).send({ errors: { msg: 'Debes introducir una contraseña válida' } });
+    return res.status(400).send({ error: 'Debes introducir una contraseña válida' });
   }
 
   User.findOne({ email: req.body.email }).then((user) => {
     // If user exists, return error
     if (user) {
-      return res.status(409).send({ errors: { msg: 'Ya existe un usuario registrado con ese email' } });
+      return res.status(409).send({ error : 'Ya existe un usuario registrado con ese email' });
     }
 
     return User.find({ role: 'N'}).then((nutritionist) => { 
