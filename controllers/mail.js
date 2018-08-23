@@ -3,7 +3,7 @@ const mailerhbs       = require('nodemailer-express-handlebars');
 const { smtpConfig }  = require('../config/mail');
 const moment          = require('moment');
 
-module.exports.sendEmail = function(user) {
+module.exports.sendNewCustomerEmail = function(user) {
   const smtpTransport = nodemailer.createTransport(smtpConfig);
   const mailOptions = {
     to: 'jorgebaztan@dietafarma.es',

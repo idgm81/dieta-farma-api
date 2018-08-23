@@ -28,7 +28,7 @@ module.exports.create = function(req, res, next) {
       newUser.set('nutritionist', mongoose.Types.ObjectId(nutritionist._id));
 
       return newUser.save().then((user) => {
-        MailController.sendEmail(user);
+        MailController.sendNewCustomerEmail(user);
         MailController.sendConfirmRegistration(user);
 
         return res.status(200).json({ user: { _id: user._id }});
