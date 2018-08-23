@@ -28,7 +28,7 @@ module.exports.create = function(req, res, next) {
       newUser.set('nutritionist', mongoose.Types.ObjectId(nutritionist._id));
 
       return newUser.save().then((user) => {
-        MailController.sendNewCustomerEmail(user);
+        MailController.sendNewCustomerNotification(user);
         MailController.sendConfirmRegistration(user);
 
         return res.status(200).json({ user: { _id: user._id }});
@@ -86,17 +86,5 @@ module.exports.delete = function(req, res) {
 
       return res.status(204).end();
     });
-  });
-};
-
-module.exports.advance = function(req, res) {
-  User.findById(req.body.customer, (err, user) => {
-    if (err || !user) {
-      return res.status(409).json({ error: 'Error al enviar respuestas del nuevo formulario' });
-    }
-
-    MailController.sendNewDietQuestionsNotification(user, req.body.questions);
-
-    return res.status(204).end();
   });
 };
