@@ -88,9 +88,6 @@ apiRoutes.get('/users/:id', passport.authenticate(), UserController.get);
 // Create new user route (POST http://localhost:4500/api/users)
 apiRoutes.post('/users', UserController.create);
 
-// Request new diet route (POST http://localhost:4500/api/users-advance)
-apiRoutes.post('/users-advance', passport.authenticate(), UserController.advance);
-
 // Modify user route (PUT http://localhost:4500/api/users/:id)
 apiRoutes.put('/users/:id', passport.authenticate(), UserController.modify);
 
