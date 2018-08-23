@@ -12,23 +12,23 @@ module.exports.sendNewCustomerEmail = function(user) {
     text: `Hola Jorge, tienes un nuevo cliente. Su nombre es ${user.profile.name} ${user.profile.surname} y su email ${user.email}\n\nUn cordial saludo`,
     attachments: [{
       filename: 'article.png',
-      path: './public/assets/images',
+      path: './public/assets/images/article.png',
       cid: 'article@dietafarma'
     }, {
       filename: 'logo-dietafarma-basic-white.png',
-      path: './public/assets/images',
+      path: './public/assets/images/logo-dietafarma-basic-white.png',
       cid: 'logo@dietafarma'
     }, {
       filename: 'facebook.png',
-      path: './public/assets/images',
+      path: './public/assets/images/facebook.png',
       cid: 'facebook@dietafarma'
     }, {
       filename: 'twitter.png',
-      path: './public/assets/images',
+      path: './public/assets/images/twitter.png',
       cid: 'twitter@dietafarma'
     }, {
       filename: 'instagram.png',
-      path: './public/assets/images',
+      path: './public/assets/images/instagram.png',
       cid: 'instagram@dietafarma'
     }]
   };
@@ -62,23 +62,23 @@ module.exports.sendConfirmRegistration = function(user) {
     },
     attachments: [{
       filename: 'article.png',
-      path: './public/assets/images',
+      path: './public/assets/images/article.png',
       cid: 'article@dietafarma'
     }, {
       filename: 'logo-dietafarma-basic-white.png',
-      path: './public/assets/images',
+      path: './public/assets/images/logo-dietafarma-basic-white.png',
       cid: 'logo@dietafarma'
     }, {
       filename: 'facebook.png',
-      path: './public/assets/images',
+      path: './public/assets/images/facebook.png',
       cid: 'facebook@dietafarma'
     }, {
       filename: 'twitter.png',
-      path: './public/assets/images',
+      path: './public/assets/images/twitter.png',
       cid: 'twitter@dietafarma'
     }, {
       filename: 'instagram.png',
-      path: './public/assets/images',
+      path: './public/assets/images/instagram.png',
       cid: 'instagram@dietafarma'
     }]
   };
@@ -116,23 +116,23 @@ module.exports.sendForgotPasswordNotification = function(user) {
     },
     attachments: [{
       filename: 'article.png',
-      path: './public/assets/images',
+      path: './public/assets/images/article.png',
       cid: 'article@dietafarma'
     }, {
       filename: 'logo-dietafarma-basic-white.png',
-      path: './public/assets/images',
+      path: './public/assets/images/logo-dietafarma-basic-white.png',
       cid: 'logo@dietafarma'
     }, {
       filename: 'facebook.png',
-      path: './public/assets/images',
+      path: './public/assets/images/facebook.png',
       cid: 'facebook@dietafarma'
     }, {
       filename: 'twitter.png',
-      path: './public/assets/images',
+      path: './public/assets/images/twitter.png',
       cid: 'twitter@dietafarma'
     }, {
       filename: 'instagram.png',
-      path: './public/assets/images',
+      path: './public/assets/images/instagram.png',
       cid: 'instagram@dietafarma'
     }]
   };
@@ -166,23 +166,23 @@ module.exports.sendDietNotification = function(user) {
     },
     attachments: [{
       filename: 'article.png',
-      path: './public/assets/images',
+      path: './public/assets/images/article.png',
       cid: 'article@dietafarma'
     }, {
       filename: 'logo-dietafarma-basic-white.png',
-      path: './public/assets/images',
+      path: './public/assets/images/logo-dietafarma-basic-white.png',
       cid: 'logo@dietafarma'
     }, {
       filename: 'facebook.png',
-      path: './public/assets/images',
+      path: './public/assets/images/facebook.png',
       cid: 'facebook@dietafarma'
     }, {
       filename: 'twitter.png',
-      path: './public/assets/images',
+      path: './public/assets/images/twitter.png',
       cid: 'twitter@dietafarma'
     }, {
       filename: 'instagram.png',
-      path: './public/assets/images',
+      path: './public/assets/images/instagram.png',
       cid: 'instagram@dietafarma'
     }]
   };
@@ -247,23 +247,23 @@ module.exports.sendNewDietQuestionsNotification = function(user, data) {
     },
     attachments: [{
       filename: 'article.png',
-      path: './public/assets/images',
+      path: './public/assets/images/article.png',
       cid: 'article@dietafarma'
     }, {
       filename: 'logo-dietafarma-basic-white.png',
-      path: './public/assets/images',
+      path: './public/assets/images/logo-dietafarma-basic-white.png',
       cid: 'logo@dietafarma'
     }, {
       filename: 'facebook.png',
-      path: './public/assets/images',
+      path: './public/assets/images/facebook.png',
       cid: 'facebook@dietafarma'
     }, {
       filename: 'twitter.png',
-      path: './public/assets/images',
+      path: './public/assets/images/twitter.png',
       cid: 'twitter@dietafarma'
     }, {
       filename: 'instagram.png',
-      path: './public/assets/images',
+      path: './public/assets/images/instagram.png',
       cid: 'instagram@dietafarma'
     }]
   };
@@ -289,23 +289,23 @@ module.exports.sendAppointmentNotification = function(user, appointment) {
     text: `Se ha reservado una cita ${appointment.type === 'P' ? 'presencial' : 'por videollamada skype'} con ${user.profile.name} ${user.profile.surname} el próximo ${moment(appointment.date).utc().format('DD/MM/YYYY [a las] HH:mm')}`,
     attachments: [{
       filename: 'article.png',
-      path: './public/assets/images',
+      path: './public/assets/images/article.png',
       cid: 'article@dietafarma'
     }, {
       filename: 'logo-dietafarma-basic-white.png',
-      path: './public/assets/images',
+      path: './public/assets/images/logo-dietafarma-basic-white.png',
       cid: 'logo@dietafarma'
     }, {
       filename: 'facebook.png',
-      path: './public/assets/images',
+      path: './public/assets/images/facebook.png',
       cid: 'facebook@dietafarma'
     }, {
       filename: 'twitter.png',
-      path: './public/assets/images',
+      path: './public/assets/images/twitter.png',
       cid: 'twitter@dietafarma'
     }, {
       filename: 'instagram.png',
-      path: './public/assets/images',
+      path: './public/assets/images/instagram.png',
       cid: 'instagram@dietafarma'
     }]
   };
@@ -331,23 +331,23 @@ module.exports.sendCancelAppointmentNotification = function(user, appointment) {
     text: `La cita ${appointment.type === 'P' ? 'presencial' : 'por videollamada skype'} del próximo ${moment(appointment.date).utc().format('DD/MM/YYYY [a las] HH:mm')} ha sido cancelada`,
     attachments: [{
       filename: 'article.png',
-      path: './public/assets/images',
+      path: './public/assets/images/article.png',
       cid: 'article@dietafarma'
     }, {
       filename: 'logo-dietafarma-basic-white.png',
-      path: './public/assets/images',
+      path: './public/assets/images/logo-dietafarma-basic-white.png',
       cid: 'logo@dietafarma'
     }, {
       filename: 'facebook.png',
-      path: './public/assets/images',
+      path: './public/assets/images/facebook.png',
       cid: 'facebook@dietafarma'
     }, {
       filename: 'twitter.png',
-      path: './public/assets/images',
+      path: './public/assets/images/twitter.png',
       cid: 'twitter@dietafarma'
     }, {
       filename: 'instagram.png',
-      path: './public/assets/images',
+      path: './public/assets/images/instagram.png',
       cid: 'instagram@dietafarma'
     }]
   };
