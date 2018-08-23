@@ -20,9 +20,9 @@ module.exports.get = function(req, res) {
 module.exports.create = function(req, res) {
   const newDiet = new Diet(req.body);
 
-  return newDiet.save().then((diet) => {
+  newDiet.save().then((diet) => {
     if (diet.type === 'D') {
-      User.findByIdAndUpdate(req.body.customer, { $set: { 'profile.pendingDiet': false }}).then((user) => {
+      return User.findByIdAndUpdate(req.body.customer, { $set: { 'profile.pendingDiet': false }}).then((user) => {
 
         MailController.sendDietNotification(user);
 
