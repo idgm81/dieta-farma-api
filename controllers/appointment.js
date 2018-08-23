@@ -137,7 +137,7 @@ module.exports.delete = function(req, res) {
       if (req.query.updateCredits) {
         const credits = appointment.type === 'P' ? 3 : 2;
 
-        User.findByIdAndUpdate(appointment.customer, { $inc: { 'profile.credits' : credits }}, (err, user) => {
+        return User.findByIdAndUpdate(appointment.customer, { $inc: { 'profile.credits' : credits }}, (err, user) => {
           if (err) {
             return res.status(409).json({ error: 'Error al buscar el cliente de la cita' });
           }
