@@ -337,3 +337,32 @@ module.exports.sendMessageNotification = function(from, to) {
     return smtpTransport.close();
   });
 };
+
+module.exports.sendPurchaseNotification = function(user, description) {
+  const smtpTransport = nodemailer.createTransport(smtpConfig);
+  smtpTransport.use('compile', mailerhbs({
+    viewPath: './public/assets', //Path to email template folder
+    extName: '.hbs'
+  }));
+  const mailOptions = {
+    to: 'jorgebaztan@dietafarma.es',
+    from: 'info@dietafarma.es',
+    subject: `DietaFarma Online: Nueva solicitud ${description}`,
+    template: 'email',
+    context: {
+      title: `DietaFarma Online: Nueva solicitud ${description}`,
+      header: 'Hola Jorge',
+      body: `Tu cliente ${user.profile.name} ${user.profile.surname} te ha solicitado una nueva dieta. Un saludo`
+    }
+  };
+
+  smtpTransport.sendMail(mailOptions, function(err, info) {
+    if (err) {
+      console.log(err);
+      return smtpTransport.close();
+    }
+
+    console.log('Message sent: %s', info.messageId);
+    return smtpTransport.close();
+  });
+};

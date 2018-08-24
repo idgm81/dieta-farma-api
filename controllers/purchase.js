@@ -1,4 +1,6 @@
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const MailController    = require('./mail');
+const User              = require('../models/user');
+const stripe            = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 module.exports.create = function(req, res) {
   stripe.charges.create({
@@ -11,7 +13,11 @@ module.exports.create = function(req, res) {
       customer_id: req.body.customer
     }
   }).then((charge) => {
-    return res.status(200).json({ charge });
+    return User.findById(req.body.customer).then((user) => {
+      MailController.sendPurchaseNotification(user, req.body.description);
+
+      return res.status(200).json({ charge });
+    });
   }).catch((error) => {
     return res.status(409).json({ error });
   });
