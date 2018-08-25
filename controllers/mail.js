@@ -324,7 +324,28 @@ module.exports.sendMessageNotification = function(from, to) {
       title: 'DietaFarma Online: Tienes un nuevo mensaje',
       header: `Hola ${to.profile.name}`,
       body: 'Has recibido un nuevo mensaje. Para leerlo diríjete a https://dieta-farma-online.herokuapp.com/login e introduce tu usuario y contraseña para acceder a la aplicación.\nRecibe un cordial saludo'
-    }
+    },
+    attachments: [{
+      filename: 'article.png',
+      path: './public/assets/images/article.png',
+      cid: 'article@dietafarma'
+    }, {
+      filename: 'logo-dietafarma-basic-white.png',
+      path: './public/assets/images/logo-dietafarma-basic-white.png',
+      cid: 'logo@dietafarma'
+    }, {
+      filename: 'facebook.png',
+      path: './public/assets/images/facebook.png',
+      cid: 'facebook@dietafarma'
+    }, {
+      filename: 'twitter.png',
+      path: './public/assets/images/twitter.png',
+      cid: 'twitter@dietafarma'
+    }, {
+      filename: 'instagram.png',
+      path: './public/assets/images/instagram.png',
+      cid: 'instagram@dietafarma'
+    }]
   };
 
   smtpTransport.sendMail(mailOptions, function(err, info) {
@@ -353,7 +374,28 @@ module.exports.sendPurchaseNotification = function(user, description) {
       title: `DietaFarma Online: Nueva solicitud ${description}`,
       header: 'Hola Jorge',
       body: `Tu cliente ${user.profile.name} ${user.profile.surname} te ha solicitado una nueva dieta. Un saludo`
-    }
+    },
+    attachments: [{
+      filename: 'article.png',
+      path: './public/assets/images/article.png',
+      cid: 'article@dietafarma'
+    }, {
+      filename: 'logo-dietafarma-basic-white.png',
+      path: './public/assets/images/logo-dietafarma-basic-white.png',
+      cid: 'logo@dietafarma'
+    }, {
+      filename: 'facebook.png',
+      path: './public/assets/images/facebook.png',
+      cid: 'facebook@dietafarma'
+    }, {
+      filename: 'twitter.png',
+      path: './public/assets/images/twitter.png',
+      cid: 'twitter@dietafarma'
+    }, {
+      filename: 'instagram.png',
+      path: './public/assets/images/instagram.png',
+      cid: 'instagram@dietafarma'
+    }]
   };
 
   smtpTransport.sendMail(mailOptions, function(err, info) {
