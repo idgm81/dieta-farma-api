@@ -3,8 +3,7 @@ const User              = require('../models/user');
 const stripe            = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 module.exports.create = function(req, res) {
-
-  if (req.params.free === 'true') {
+  if (req.query.free) {
     return User.findById(req.body.customer).then((user) => {
       MailController.sendPurchaseNotification(user, req.body.description);
       MailController.sendPurchaseCustomerNotification(user, req.body.description);
