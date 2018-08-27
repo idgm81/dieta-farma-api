@@ -408,3 +408,53 @@ module.exports.sendPurchaseNotification = function(user, description) {
     return smtpTransport.close();
   });
 };
+
+module.exports.sendPurchaseCustomerNotification = function(user, description) {
+  const smtpTransport = nodemailer.createTransport(smtpConfig);
+  smtpTransport.use('compile', mailerhbs({
+    viewPath: './public/assets', //Path to email template folder
+    extName: '.hbs'
+  }));
+  const mailOptions = {
+    to: user.email,
+    from: 'info@dietafarma.es',
+    subject: `DietaFarma Online: Nueva solicitud ${description}`,
+    template: 'email',
+    context: {
+      title: `DietaFarma Online: Nueva solicitud ${description}`,
+      header: `Hola ${user.profile.name}`,
+      body: `Te confirmamos que tu solicitud de una nueva ${description} ha sido recibida por tu nutricionista. En el caso de haber solicitado un servicio online, recibirás tu dieta en un plazo máximo de 48 horas. Un saludo`
+    },
+    attachments: [{
+      filename: 'article.png',
+      path: './public/assets/images/article.png',
+      cid: 'article@dietafarma'
+    }, {
+      filename: 'logo-dietafarma-basic-white.png',
+      path: './public/assets/images/logo-dietafarma-basic-white.png',
+      cid: 'logo@dietafarma'
+    }, {
+      filename: 'facebook.png',
+      path: './public/assets/images/facebook.png',
+      cid: 'facebook@dietafarma'
+    }, {
+      filename: 'twitter.png',
+      path: './public/assets/images/twitter.png',
+      cid: 'twitter@dietafarma'
+    }, {
+      filename: 'instagram.png',
+      path: './public/assets/images/instagram.png',
+      cid: 'instagram@dietafarma'
+    }]
+  };
+
+  smtpTransport.sendMail(mailOptions, function(err, info) {
+    if (err) {
+      console.log(err);
+      return smtpTransport.close();
+    }
+
+    console.log('Message sent: %s', info.messageId);
+    return smtpTransport.close();
+  });
+};

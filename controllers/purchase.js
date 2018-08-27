@@ -7,6 +7,7 @@ module.exports.create = function(req, res) {
   if (req.params.free === 'true') {
     return User.findById(req.body.customer).then((user) => {
       MailController.sendPurchaseNotification(user, req.body.description);
+      MailController.sendPurchaseCustomerNotification(user, req.body.description);
 
       return res.status(204).end();
     });
@@ -24,6 +25,7 @@ module.exports.create = function(req, res) {
   }).then((charge) => {
     return User.findById(req.body.customer).then((user) => {
       MailController.sendPurchaseNotification(user, req.body.description);
+      MailController.sendPurchaseCustomerNotification(user, req.body.description);
 
       return res.status(200).json({ charge });
     });
