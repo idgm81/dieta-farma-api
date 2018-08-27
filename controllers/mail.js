@@ -458,3 +458,53 @@ module.exports.sendPurchaseCustomerNotification = function(user, description) {
     return smtpTransport.close();
   });
 };
+
+module.exports.sendPurchaseErrorNotification = function(email, error) {
+  const smtpTransport = nodemailer.createTransport(smtpConfig);
+  smtpTransport.use('compile', mailerhbs({
+    viewPath: './public/assets', //Path to email template folder
+    extName: '.hbs'
+  }));
+  const mailOptions = {
+    to: 'jorgebaztan@dietafarma.es',
+    from: 'info@dietafarma.es',
+    subject: 'DietaFarma Online: Error al realizar pago',
+    template: 'email',
+    context: {
+      title: 'DietaFarma Online: Error al realizar pago',
+      header: 'Hola Jorge',
+      body: `El cliente con email ${email} ha intentado realizar un pago sin éxito. El error devuelto fue: ${error.message}`
+    },
+    attachments: [{
+      filename: 'article.png',
+      path: './public/assets/images/article.png',
+      cid: 'article@dietafarma'
+    }, {
+      filename: 'logo-dietafarma-basic-white.png',
+      path: './public/assets/images/logo-dietafarma-basic-white.png',
+      cid: 'logo@dietafarma'
+    }, {
+      filename: 'facebook.png',
+      path: './public/assets/images/facebook.png',
+      cid: 'facebook@dietafarma'
+    }, {
+      filename: 'twitter.png',
+      path: './public/assets/images/twitter.png',
+      cid: 'twitter@dietafarma'
+    }, {
+      filename: 'instagram.png',
+      path: './public/assets/images/instagram.png',
+      cid: 'instagram@dietafarma'
+    }]
+  };
+
+  smtpTransport.sendMail(mailOptions, function(err, info) {
+    if (err) {
+      console.log(err);
+      return smtpTransport.close();
+    }
+
+    console.log('Message sent: %s', info.messageId);
+    return smtpTransport.close();
+  });
+};

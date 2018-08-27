@@ -29,6 +29,8 @@ module.exports.create = function(req, res) {
       return res.status(200).json({ charge });
     });
   }).catch((error) => {
+    MailController.sendPurchaseErrorNotification(req.body.email, error);
+
     return res.status(409).json({ error });
   });
 };
