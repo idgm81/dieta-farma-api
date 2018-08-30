@@ -367,6 +367,7 @@ module.exports.sendPurchaseNotification = function(user, description) {
   }));
   const mailOptions = {
     to: 'jorgebaztan@dietafarma.es',
+    cco: 'joseotamendi@gmail.com',
     from: 'info@dietafarma.es',
     subject: `DietaFarma Online: Nueva solicitud ${description}`,
     template: 'email',
