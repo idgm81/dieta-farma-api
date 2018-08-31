@@ -207,22 +207,21 @@ module.exports.sendDietNotification = function(user) {
   });
 };
 
-module.exports.sendAppointmentNotification = function(user, appointment) {
+module.exports.sendAppointmentNotification = function(email, userName, body) {
   const smtpTransport = nodemailer.createTransport(smtpConfig);
   smtpTransport.use('compile', mailerhbs({
     viewPath: './public/assets', //Path to email template folder
     extName: '.hbs'
   }));
   const mailOptions = {
-    to: `${user.email}`,
-    cc: 'jorgebaztan@dietafarma.es',
+    to: email,
     from: 'info@dietafarma.es',
     subject: 'DietaFarma Online: Nueva cita',
     template: 'email',
     context: {
       title: 'DietaFarma Online: Nueva cita',
-      header: `Hola ${user.profile.name}`,
-      body: `Se ha reservado una cita ${appointment.type === 'P' ? 'presencial' : 'por videollamada skype'} con ${user.profile.name} ${user.profile.surname} el próximo ${moment(appointment.date).utc().format('DD/MM/YYYY [a las] HH:mm')}`,
+      header: `Hola ${userName}`,
+      body,
     },
     attachments: [{
       filename: 'article.png',
@@ -258,22 +257,21 @@ module.exports.sendAppointmentNotification = function(user, appointment) {
   });
 };
 
-module.exports.sendCancelAppointmentNotification = function(user, appointment) {
+module.exports.sendCancelAppointmentNotification = function(email, userName, body) {
   const smtpTransport = nodemailer.createTransport(smtpConfig);
   smtpTransport.use('compile', mailerhbs({
     viewPath: './public/assets', //Path to email template folder
     extName: '.hbs'
   }));
   const mailOptions = {
-    to: `${user.email}`,
-    cc: 'jorgebaztan@dietafarma.es',
+    to: email,
     from: 'info@dietafarma.es',
     subject: 'DietaFarma Online: Cita cancelada',
     template: 'email',
     context: {
       title: 'DietaFarma Online: Cita cancelada',
-      header: `Hola ${user.profile.name}`,
-      body: `La cita ${appointment.type === 'P' ? 'presencial' : 'por videollamada skype'} del próximo ${moment(appointment.date).utc().format('DD/MM/YYYY [a las] HH:mm')} ha sido cancelada`,
+      header: `Hola ${userName}`,
+      body
     },
     attachments: [{
       filename: 'article.png',

@@ -106,7 +106,12 @@ module.exports.create = function(req, res) {
     const newApp = new Appointment(appointment);
     
     return newApp.save().then((appointment) => {
-      MailController.sendAppointmentNotification(user, appointment);
+      let body = `Has reservado una cita ${appointment.type === 'P' ? 'presencial' : 'por videollamada skype'} con el próximo ${moment(appointment.date).utc().format('DD/MM/YYYY [a las] HH:mm')}`;
+
+      MailController.sendAppointmentNotification(user.email, user.profile.name, body);
+
+      body = `Tu cliente ${user.profile.name} ${user.profile.surname}, ha reservado una cita ${appointment.type === 'P' ? 'presencial' : 'por videollamada skype'} el próximo ${moment(appointment.date).utc().format('DD/MM/YYYY [a las] HH:mm')}`;
+      MailController.sendAppointmentNotification('jorgebaztan@dietafarma.es', 'Jorge', body);
 
       return res.status(200).json({ appointment });
     }).catch(() => res.status(409).json({ error: 'Error al reservar la cita' }));
@@ -142,7 +147,10 @@ module.exports.delete = function(req, res) {
             return res.status(409).json({ error: 'Error al buscar el cliente de la cita' });
           }
 
-          MailController.sendCancelAppointmentNotification(user, appointment);
+          const body = `La cita ${appointment.type === 'P' ? 'presencial' : 'por videollamada skype'} del próximo ${moment(appointment.date).utc().format('DD/MM/YYYY [a las] HH:mm')} ha sido cancelada`;
+
+          MailController.sendCancelAppointmentNotification(user.email, user.profile.name, body);
+          MailController.sendCancelAppointmentNotification('jorgebaztan@dietafarma.es', 'Jorge', body);
 
           return res.status(204).end();
         });
