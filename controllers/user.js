@@ -20,7 +20,7 @@ module.exports.create = function(req, res, next) {
       return res.status(409).send({ error : 'Ya existe un usuario registrado con ese email' });
     }
 
-    return User.find({ role: 'N'}).then((nutritionist) => { 
+    User.findOne({ role: 'N'}).then((nutritionist) => { 
       // If email is unique and password was provided, we create new user
 
       const newUser = new User(req.body);
@@ -50,13 +50,12 @@ module.exports.get = function(req, res) {
   });
 };
 
-module.exports.getAll = function(req, res, next) {
+module.exports.getAll = function(req, res) {
   const role = req.query.role;
 
   User.find({ role }, (err, users) => {
     if (err) {
-      res.status(409).json({ error: 'No se ha podido recuperar la lista de usuarios' });
-      return next(err);
+      return res.status(409).json({ error: 'No se ha podido recuperar la lista de usuarios' });
     }
 
     return res.status(200).json({ users });
