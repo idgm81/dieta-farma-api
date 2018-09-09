@@ -1,7 +1,6 @@
 const nodemailer      = require('nodemailer');
 const mailerhbs       = require('nodemailer-express-handlebars');
 const { smtpConfig }  = require('../config/mail');
-const moment          = require('moment');
 
 module.exports.sendNewCustomerNotification = function(user) {
   const smtpTransport = nodemailer.createTransport(smtpConfig);
@@ -67,7 +66,7 @@ module.exports.sendConfirmRegistration = function(user) {
     context: {
       title: 'DietaFarma Online: Registro completado',
       header: `Estimado ${user.profile.name}`,
-      body: 'Bienvenido a Dietafarma online. Desde este momento tienes a tu disposición una plataforma online para que te sea más sencillo realizar tus consultas a tu nutriocionista. Diríjete a https://dieta-farma-online.herokuapp.com/login e introduce tu usuario y contraseña para acceder a la aplicación.\nEn caso de no poder acceder envía un correo a info@dietafarma.es exponiendo tu problema de acceso.\nRecibe un cordial saludo'
+      body: 'Bienvenido a Dietafarma online. Desde este momento tienes a tu disposición una plataforma online para que te sea más sencillo realizar tus consultas a tu nutriocionista. Diríjete a https://www.dietafarma.es/login e introduce tu usuario y contraseña para acceder a la aplicación.\nEn caso de no poder acceder envía un correo a info@dietafarma.es exponiendo tu problema de acceso.\nRecibe un cordial saludo'
     },
     attachments: [{
       filename: 'article.png',
@@ -120,7 +119,7 @@ module.exports.sendForgotPasswordNotification = function(user) {
       body: `Has recibido este mensaje porque has solicitado el cambio de contraseña de tu cuenta en DietaFarma Online.\n\n
       Por favor, haz click en el enlace de más abajo para continuar el proceso.\n\n
       Si no has solicitado este cambio, por favor ignora este email y tu contraseña no será modificada.\n`,
-      host: (process.env.NODE_ENV === 'development') ? 'localhost:4200' : 'dieta-farma-online.herokuapp.com',
+      host: (process.env.NODE_ENV === 'development') ? 'localhost:4200' : 'www.dietafarma.es',
       token: `${user.resetPasswordToken}`
     },
     attachments: [{
@@ -171,7 +170,7 @@ module.exports.sendDietNotification = function(user) {
     context: {
       title: 'DietaFarma Online: Nueva dieta',
       header: `Hola ${user.profile.name}`,
-      body: 'Tu nutricionista online ha puesto a tu disposición en la plataforma un nuevo documento. Para descargarlo diríjete a https://dieta-farma-online.herokuapp.com/login e introduce tu usuario y contraseña para acceder a la aplicación.\nEn caso de no poder acceder envía un correo a info@dietafarma.es exponiendo tu problema de acceso. Si puedes verlo pero te surgen dudas sobre el documento o de cómo realizar algunos aspectos (en el caso de tratarse de una dieta personalizada), escribe tu duda en el apartado “Mensajes” de la plataforma.\nRecibe un cordial saludo'
+      body: 'Tu nutricionista online ha puesto a tu disposición en la plataforma un nuevo documento. Para descargarlo diríjete a https://www.dietafarma.es/login e introduce tu usuario y contraseña para acceder a la aplicación.\nEn caso de no poder acceder envía un correo a info@dietafarma.es exponiendo tu problema de acceso. Si puedes verlo pero te surgen dudas sobre el documento o de cómo realizar algunos aspectos (en el caso de tratarse de una dieta personalizada), escribe tu duda en el apartado “Mensajes” de la plataforma.\nRecibe un cordial saludo'
     },
     attachments: [{
       filename: 'article.png',
@@ -321,7 +320,7 @@ module.exports.sendMessageNotification = function(from, to) {
     context: {
       title: 'DietaFarma Online: Tienes un nuevo mensaje',
       header: `Hola ${to.profile.name}`,
-      body: 'Has recibido un nuevo mensaje. Para leerlo diríjete a https://dieta-farma-online.herokuapp.com/login e introduce tu usuario y contraseña para acceder a la aplicación.\nRecibe un cordial saludo'
+      body: 'Has recibido un nuevo mensaje. Para leerlo diríjete a https://www.dietafarma.es/login e introduce tu usuario y contraseña para acceder a la aplicación.\nRecibe un cordial saludo'
     },
     attachments: [{
       filename: 'article.png',
