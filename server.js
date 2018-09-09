@@ -38,7 +38,12 @@ app.use(swStats.getMiddleware({}));
 
 // enable cors
 const corsOption = {
-  origin: ['http://localhost:4200', 'https://dieta-farma-online.herokuapp.com', 'https://beta-dieta-farma-online.herokuapp.com'],
+  origin: [
+    'http://localhost:4200',
+    'https://www.dietafarma.es',
+    'https://dieta-farma-online.herokuapp.com',
+    'https://beta-dieta-farma-online.herokuapp.com'
+  ],
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   preflightContinue: true,
   optionsSuccessStatus: 200
