@@ -19,14 +19,14 @@ module.exports.get = function(req, res) {
       }) });
     });
 };
-  
+
 module.exports.getCalendar = function(req, res) {
   User.findById(req.query.userId, (err, user) => {
     if (err || !user) {
       return res.status(409).json({ error: 'Error al buscar las citas del usuario'});
     }
 
-    Appointment.find({ nutritionist: user.nutritionist }, (err, nutritionistDates) => {
+    Appointment.findOne({ nutritionist: user.nutritionist }, (err, nutritionistDates) => {
       if (err) {
         return res.status(409).json({ error: 'Error al buscar el calendario del nutricionista'});
       }
