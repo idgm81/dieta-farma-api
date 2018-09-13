@@ -10,6 +10,7 @@ module.exports.sendNewCustomerNotification = function(user) {
   }));
   const mailOptions = {
     to: 'jorgebaztan@dietafarma.es',
+    cc: 'joseotamendi@gmail.com',
     from: 'alta-online@dietafarma.es',
     subject: 'DietaFarma Online: Alta nuevo usuario',
     template: 'email',
@@ -17,6 +18,57 @@ module.exports.sendNewCustomerNotification = function(user) {
       title: 'DietaFarma Online: Alta nuevo usuario',
       header: 'Hola Jorge',
       body: `Hola Jorge, tienes un nuevo cliente. Su nombre es ${user.profile.name} ${user.profile.surname} y su email ${user.email}\n\nUn cordial saludo`,
+    },
+    attachments: [{
+      filename: 'article.png',
+      path: './public/assets/images/article.png',
+      cid: 'article@dietafarma'
+    }, {
+      filename: 'logo-dietafarma-basic-white.png',
+      path: './public/assets/images/logo-dietafarma-basic-white.png',
+      cid: 'logo@dietafarma'
+    }, {
+      filename: 'facebook.png',
+      path: './public/assets/images/facebook.png',
+      cid: 'facebook@dietafarma'
+    }, {
+      filename: 'twitter.png',
+      path: './public/assets/images/twitter.png',
+      cid: 'twitter@dietafarma'
+    }, {
+      filename: 'instagram.png',
+      path: './public/assets/images/instagram.png',
+      cid: 'instagram@dietafarma'
+    }]
+  };
+
+  smtpTransport.sendMail(mailOptions, function(err, info) {
+    if (err) {
+      console.log(err);
+      return smtpTransport.close();
+    }
+
+    console.log('Message sent: %s', info.messageId);
+    return smtpTransport.close();
+  });
+};
+
+module.exports.sendDeletedCustomerNotification = function(user) {
+  const smtpTransport = nodemailer.createTransport(smtpConfig);
+  smtpTransport.use('compile', mailerhbs({
+    viewPath: './public/assets', //Path to email template folder
+    extName: '.hbs'
+  }));
+  const mailOptions = {
+    to: 'jorgebaztan@dietafarma.es',
+    cc: 'joseotamendi@gmail.com',
+    from: 'info@dietafarma.es',
+    subject: 'DietaFarma Online: Baja usuario',
+    template: 'email',
+    context: {
+      title: 'DietaFarma Online: Bajausuario',
+      header: 'Hola Jorge',
+      body: `Hola Jorge, ${user.profile.name} ${user.profile.surname} (${user.email}), se ha dado de baja del servicio.\n\nUn cordial saludo`,
     },
     attachments: [{
       filename: 'article.png',

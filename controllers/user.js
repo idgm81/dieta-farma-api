@@ -83,6 +83,8 @@ module.exports.delete = function(req, res) {
         return res.status(500).json({ error: 'No se ha podido dar de baja este usuario' });
       }
 
+      MailController.sendDeletedCustomerNotification(user);
+
       return res.status(204).end();
     });
   });
