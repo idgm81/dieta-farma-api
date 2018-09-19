@@ -40,8 +40,7 @@ module.exports.create = function(req, res, next) {
 };
 
 module.exports.get = function(req, res) {
-
-  User.findOne({ _id: req.params.id }, (err, user) => {
+  User.findById(req.params.id, (err, user) => {
     if (err) {
       return res.status(409).json({ error: 'No se ha podido recuperar los datos de este usuario' });
     }
