@@ -26,8 +26,8 @@ module.exports.getCalendar = function(req, res) {
       return res.status(409).json({ error: 'Error al buscar las citas del usuario'});
     }
 
-    Appointment.findOne({ nutritionist: user.nutritionist }, (err, nutritionistDates) => {
-      if (err) {
+    Appointment.findOne({ nutritionist: mongoose.Types.ObjectId(user.nutritionist) }, (err, nutritionistDates) => {
+      if (err || nutritionistDates.length === 0) {
         return res.status(409).json({ error: 'Error al buscar el calendario del nutricionista'});
       }
 
