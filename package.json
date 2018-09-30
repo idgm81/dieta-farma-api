@@ -28,6 +28,7 @@
     "moment": "2.20.1",
     "mongoose": "4.13.1",
     "morgan": "1.7.0",
+    "newrelic": "4.8.1",
     "nodemailer": "4.6.5",
     "nodemailer-express-handlebars": "3.0.0",
     "passport": "0.4.0",
