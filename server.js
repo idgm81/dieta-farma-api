@@ -1,4 +1,3 @@
-require('newrelic');
 require('dotenv').config();
 
 const express                   = require('express');
@@ -64,7 +63,7 @@ app.use(passport.initialize());
 // =============================================================================
 // home api route (GET http://localhost:4500)
 apiRoutes.get('/', (req, res) => {
-  res.json({ message: 'hooray! welcome to our api!' });
+  res.json({ message: 'hooray! welcome to dieta farma API!' });
 });
 
 // login auth route (POST http://localhost:4500/api/auth/user)
@@ -174,7 +173,6 @@ apiRoutes.post('/purchases', passport.authenticate(), PurchaseController.create)
 
 // Delete purchase route (DELETE http://localhost:4500/api/purchases/:id)
 // apiRoutes.delete('/purchases/:id', passport.authenticate(), PurchaseController.delete);
-
 
 // View user profile route
 // userRoutes.get('/home', requireAuth, AuthenticationController.roleAuthorization(roles.ROLE_CLIENT), UserController.getUserProfile);
