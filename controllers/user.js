@@ -62,15 +62,15 @@ module.exports.getAll = function(req, res) {
 };
 
 module.exports.modify = function(req, res) {
-  const profileData = req.body;
+  const user_data = req.body;
 
-  User.findByIdAndUpdate(req.params.id, { $set: profileData }, { new: true }, (err, user) => {
+  User.findByIdAndUpdate(req.params.id, { $set: user_data }, { new: true }, (err, user) => {
     if (err || !user) {
       return res.status(409).json({ error: 'No se ha podido actualizar los datos de este usuario' });
     }
 
-    if (Object.keys(profileData)[0] === 'profile.credits') {
-      MailController.sendUpdateCreditsNotification(user, Object.values(profileData)[0]);
+    if (Object.keys(user_data)[0] === 'profile.credits') {
+      MailController.sendUpdateCreditsNotification(user, Object.values(user_data)[0]);
     }
 
     return res.status(200).json({ user });
