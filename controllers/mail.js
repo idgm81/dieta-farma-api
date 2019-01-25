@@ -423,7 +423,7 @@ module.exports.sendUpdateCreditsNotification = function (user, credits) {
     context: {
       title: `DietaFarma Online: Créditos gratis`,
       header: `Hola ${user.profile.name}`,
-      body: `Tu nutricionista te ha regalado creditos para que puedas solicitar nuevas dietas. Ahora dispones de un total de ${credits} créditos. Un saludo`
+      body: `Tu nutricionista te ha regalado creditos para que puedas solicitar nuevas dietas. Ahora dispones de un total de ${credits} créditos (${Math.round(Number(credits) * 15 * 100) / 100} €). Un saludo`
     },
     attachments: [{
       filename: 'article.png',
