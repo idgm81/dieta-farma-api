@@ -117,8 +117,11 @@ module.exports.sendConfirmRegistration = function(user) {
     template: 'email',
     context: {
       title: 'DietaFarma Online: Registro completado',
-      header: `Estimado ${user.profile.name}`,
-      body: 'Bienvenido a Dietafarma online. Desde este momento tienes a tu disposición una plataforma online para que te sea más sencillo realizar tus consultas a tu nutriocionista. Diríjete a https://www.dietafarma.es/login e introduce tu usuario y contraseña para acceder a la aplicación.\nEn caso de no poder acceder envía un correo a info@dietafarma.es exponiendo tu problema de acceso.\nRecibe un cordial saludo'
+      header: `Hola ${user.profile.name}`,
+      body: 'Te has registrado en Dietafarma online con éxito. Esta plataforma te mantendrá conectado conmigo, tu nutricionista online Jorge Baztán. Gracias a la información que me has facilitado podré recomendarte la dieta que mejor se adapte a ti para lograr tu objetivo.',
+      video: false,
+      prices: true,
+      steps: true
     },
     attachments: [{
       filename: 'article.png',

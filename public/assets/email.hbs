@@ -89,6 +89,42 @@
                 {{body}}
               </td>
             </tr>
+            {{#if prices}}
+              <tr>
+                <td class="bodycopy">
+                  <p>Las tarifas son:</p><br>
+                  <ul>
+                    <li>1 dieta online en diferido (la información será recogida mediante cuestionarios) <b>15 €</b></li>
+                    <li>1 video-consulta en directo (Skype) de 20 minutos + dieta <b>30 €</b></li>
+                    <li>1 consulta dietética presencial de 45 minutos + antropometría + dieta <b>45 €</b></li>
+                  </ul>
+                </td>
+              </tr>
+            {{/if}}
+            {{#if steps}}
+              <tr>
+                <td class="bodycopy">
+                  <p>Una vez elegido el servicio que más se ajusta a tus necesidades, sigue los siguientes pasos:</p><br>
+                  <ul>
+                    <li>Accede a <a href="https://www.dietafarma.es/"><b>https://www.dietafarma.es/</b></a></li>
+                    <li>Identifícate con tu correo electrónico y tu contraseña</li>
+                    <li>Accede al menú lateral y escoge la opción <b>Solicitar nueva dieta</b></li>
+                    <li>Escoge el tipo de servicio que quieres recibir (<b>presencial, videoconsulta o en diferido</b>) y sigue los pasos.</b></li>
+                    <li>Si eliges servicio presencial o videoconsulta deberás seleccionar una fecha en el <b>Calendario para reservar tu cita</b></li>
+                    <li>Recuerda que si finalmente no puedes acudir, es posible cambiar la cita hasta con <b>48 horas de antelación<b></li>
+                    <li>Si es tu primera cita pasa al siguiente punto. Si es una segunda cita o sucesivas, se te mostrará un cuestionario sobre el seguimiento de la dieta anteriormente recomendada.
+                    <li>Por último te pediremos que finalices el proceso en una pasarela de pago seguro donde se confirmarán previamente los datos de servicio elegido, correo electrónico, día y hora. Completa los datos de una <b>tarjeta de crédito o débito</b></li>
+                  </ul>
+                </td>
+              </tr>
+            {{/if}}
+            {{#if video}}
+              <tr>
+                <td>
+                  <iframe type="text/html" class="video" src="{{video}}" />
+                </td>
+              </tr>
+            {{/if}}
             <tr>
               <td style="padding: 20px 0 0 0;">
                 <table class="buttonwrapper" bgcolor="#005c6b" border="0" cellspacing="0" cellpadding="0">
