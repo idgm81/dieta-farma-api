@@ -14,9 +14,7 @@ module.exports.get = function(req, res) {
         return res.status(409).json({ error: 'Error al buscar las citas del suario'});
       }
 
-      return res.status(200).json({ appointments: appointments.filter((a) => {
-        return moment(a.date).isAfter(moment())
-      }) });
+      return res.status(200).json({ appointments });
     });
 };
 
