@@ -104,11 +104,12 @@ module.exports.create = function(req, res) {
     const newApp = new Appointment(appointment);
     
     return newApp.save().then((appointment) => {
-      let body = `Has reservado una cita ${appointment.type === 'P' ? 'presencial' : 'por videollamada skype'} con el próximo ${moment(appointment.date).utc().format('DD/MM/YYYY [a las] HH:mm')}`;
+      const dateFormatted = moment(appointment.date).utc().format('DD/MM/YYYY [a las] HH:mm');
+      let body = `Has reservado una cita ${(appointment.type === 'P' || appointment.type === 'L') ? 'presencial' : 'por videollamada skype'} el próximo ${dateFormatted}`;
 
       MailController.sendAppointmentNotification(user.email, user.profile.name, body);
 
-      body = `Tu cliente ${user.profile.name} ${user.profile.surname}, ha reservado una cita ${appointment.type === 'P' ? 'presencial' : 'por videollamada skype'} el próximo ${moment(appointment.date).utc().format('DD/MM/YYYY [a las] HH:mm')}`;
+      body = `Tu cliente ${user.profile.name} ${user.profile.surname}, ha reservado una cita ${appointment.type === 'P' ? 'presencial' : 'por videollamada skype'} el próximo ${dateFormatted}`;
       MailController.sendAppointmentNotification('jorgebaztan@dietafarma.es', 'Jorge', body);
 
       return res.status(200).json({ appointment });
@@ -137,7 +138,7 @@ module.exports.delete = function(req, res) {
         return res.status(409).json({ error: 'Error al borrar la cita' });
       }
 
-      if (req.query.updateCredits) {
+      if (Boolean(req.query.updateCredits)) {
         const credits = appointment.type === 'P' ? 3 : 2;
 
         return User.findByIdAndUpdate(appointment.customer, { $inc: { 'profile.credits' : credits }}, (err, user) => {
