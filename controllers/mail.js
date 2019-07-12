@@ -225,7 +225,7 @@ module.exports.sendDietNotification = function(user) {
     context: {
       title: 'DietaFarma Online: Nueva dieta',
       header: `Hola ${user.profile.name}`,
-      body: 'Tu nutricionista online ha puesto a tu disposición en la plataforma un nuevo documento. Para descargarlo diríjete a https://www.dietafarma.es/login e introduce tu usuario y contraseña para acceder a la aplicación.\nEn caso de no poder acceder envía un correo a info@dietafarma.es exponiendo tu problema de acceso. Si puedes verlo pero te surgen dudas sobre el documento o de cómo realizar algunos aspectos (en el caso de tratarse de una dieta personalizada), escribe tu duda en el apartado “Mensajes” de la plataforma.\nRecibe un cordial saludo'
+      body: 'Tu nutricionista online ha puesto a tu disposición en la plataforma un nuevo documento. Para descargarlo dirígete a https://www.dietafarma.es/login e introduce tu usuario y contraseña para acceder a la aplicación.\nEn caso de no poder acceder envía un correo a info@dietafarma.es exponiendo tu problema de acceso. Si puedes verlo pero te surgen dudas sobre el documento o de cómo realizar algunos aspectos (en el caso de tratarse de una dieta personalizada), escribe tu duda en el apartado “Mensajes” de la plataforma.\nRecibe un cordial saludo'
     },
     attachments: [{
       filename: 'article.png',
@@ -375,7 +375,7 @@ module.exports.sendMessageNotification = function(from, to) {
     context: {
       title: 'DietaFarma Online: Tienes un nuevo mensaje',
       header: `Hola ${to.profile.name}`,
-      body: 'Has recibido un nuevo mensaje. Para leerlo diríjete a https://www.dietafarma.es/login e introduce tu usuario y contraseña para acceder a la aplicación.\nRecibe un cordial saludo'
+      body: 'Has recibido un nuevo mensaje. Para leerlo dirígete a https://www.dietafarma.es/login e introduce tu usuario y contraseña para acceder a la aplicación.\nRecibe un cordial saludo'
     },
     attachments: [{
       filename: 'article.png',
