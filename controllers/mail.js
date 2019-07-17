@@ -5,6 +5,10 @@ const { smtpConfig }  = require('../config/mail');
 module.exports.sendNewCustomerNotification = function(user) {
   const smtpTransport = nodemailer.createTransport(smtpConfig);
   smtpTransport.use('compile', mailerhbs({
+    viewEngine: {
+      extName: '.hbs',
+      partialsDir: './public/assets'
+    },
     viewPath: './public/assets', //Path to email template folder
     extName: '.hbs'
   }));
@@ -56,6 +60,10 @@ module.exports.sendNewCustomerNotification = function(user) {
 module.exports.sendDeletedCustomerNotification = function(user) {
   const smtpTransport = nodemailer.createTransport(smtpConfig);
   smtpTransport.use('compile', mailerhbs({
+    viewEngine: {
+      extName: '.hbs',
+      partialsDir: './public/assets'
+    },
     viewPath: './public/assets', //Path to email template folder
     extName: '.hbs'
   }));
@@ -107,6 +115,10 @@ module.exports.sendDeletedCustomerNotification = function(user) {
 module.exports.sendConfirmRegistration = function(user) {
   const smtpTransport = nodemailer.createTransport(smtpConfig);
   smtpTransport.use('compile', mailerhbs({
+    viewEngine: {
+      extName: '.hbs',
+      partialsDir: './public/assets'
+    },
     viewPath: './public/assets', //Path to email template folder
     extName: '.hbs'
   }));
@@ -160,6 +172,10 @@ module.exports.sendConfirmRegistration = function(user) {
 module.exports.sendForgotPasswordNotification = function(user) {
   const smtpTransport = nodemailer.createTransport(smtpConfig);
   smtpTransport.use('compile', mailerhbs({
+    viewEngine: {
+      extName: '.hbs',
+      partialsDir: './public/assets'
+    },
     viewPath: './public/assets', //Path to email template folder
     extName: '.hbs'
   }));
@@ -214,6 +230,10 @@ module.exports.sendForgotPasswordNotification = function(user) {
 module.exports.sendDietNotification = function(user) {
   const smtpTransport = nodemailer.createTransport(smtpConfig);
   smtpTransport.use('compile', mailerhbs({
+    viewEngine: {
+      extName: '.hbs',
+      partialsDir: './public/assets'
+    },
     viewPath: './public/assets', //Path to email template folder
     extName: '.hbs'
   }));
@@ -264,6 +284,10 @@ module.exports.sendDietNotification = function(user) {
 module.exports.sendAppointmentNotification = function(email, userName, body) {
   const smtpTransport = nodemailer.createTransport(smtpConfig);
   smtpTransport.use('compile', mailerhbs({
+    viewEngine: {
+      extName: '.hbs',
+      partialsDir: './public/assets'
+    },
     viewPath: './public/assets', //Path to email template folder
     extName: '.hbs'
   }));
@@ -314,6 +338,10 @@ module.exports.sendAppointmentNotification = function(email, userName, body) {
 module.exports.sendCancelAppointmentNotification = function(email, userName, body) {
   const smtpTransport = nodemailer.createTransport(smtpConfig);
   smtpTransport.use('compile', mailerhbs({
+    viewEngine: {
+      extName: '.hbs',
+      partialsDir: './public/assets'
+    },
     viewPath: './public/assets', //Path to email template folder
     extName: '.hbs'
   }));
@@ -364,6 +392,10 @@ module.exports.sendCancelAppointmentNotification = function(email, userName, bod
 module.exports.sendMessageNotification = function(from, to) {
   const smtpTransport = nodemailer.createTransport(smtpConfig);
   smtpTransport.use('compile', mailerhbs({
+    viewEngine: {
+      extName: '.hbs',
+      partialsDir: './public/assets'
+    },
     viewPath: './public/assets', //Path to email template folder
     extName: '.hbs'
   }));
@@ -414,6 +446,10 @@ module.exports.sendMessageNotification = function(from, to) {
 module.exports.sendUpdateCreditsNotification = function (user, credits) {
   const smtpTransport = nodemailer.createTransport(smtpConfig);
   smtpTransport.use('compile', mailerhbs({
+    viewEngine: {
+      extName: '.hbs',
+      partialsDir: './public/assets'
+    },
     viewPath: './public/assets', //Path to email template folder
     extName: '.hbs'
   }));
@@ -466,6 +502,10 @@ module.exports.sendUpdateCreditsNotification = function (user, credits) {
 module.exports.sendPurchaseNotification = function(user, description) {
   const smtpTransport = nodemailer.createTransport(smtpConfig);
   smtpTransport.use('compile', mailerhbs({
+    viewEngine: {
+      extName: '.hbs',
+      partialsDir: './public/assets'
+    },
     viewPath: './public/assets', //Path to email template folder
     extName: '.hbs'
   }));
@@ -517,6 +557,10 @@ module.exports.sendPurchaseNotification = function(user, description) {
 module.exports.sendPurchaseCustomerNotification = function(user, description) {
   const smtpTransport = nodemailer.createTransport(smtpConfig);
   smtpTransport.use('compile', mailerhbs({
+    viewEngine: {
+      extName: '.hbs',
+      partialsDir: './public/assets'
+    },
     viewPath: './public/assets', //Path to email template folder
     extName: '.hbs'
   }));
@@ -567,6 +611,10 @@ module.exports.sendPurchaseCustomerNotification = function(user, description) {
 module.exports.sendPurchaseErrorNotification = function(email, error) {
   const smtpTransport = nodemailer.createTransport(smtpConfig);
   smtpTransport.use('compile', mailerhbs({
+    viewEngine: {
+      extName: '.hbs',
+      partialsDir: './public/assets'
+    },
     viewPath: './public/assets', //Path to email template folder
     extName: '.hbs'
   }));
