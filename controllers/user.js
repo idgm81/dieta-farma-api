@@ -2,7 +2,6 @@ const MailController  = require('./mail');
 const User            = require('../models/user');
 const mongoose        = require('mongoose');
 
-
 module.exports.create = function(req, res, next) {
   // Return error if no email provided
   if (!req.body.email) {
@@ -14,13 +13,13 @@ module.exports.create = function(req, res, next) {
     return res.status(400).send({ error: 'Debes introducir una contraseña válida' });
   }
 
-  User.findOne({ email: req.body.email }).then((user) => {
+  return User.findOne({ email: req.body.email }).then((user) => {
     // If user exists, return error
     if (user) {
       return res.status(409).send({ error : 'Ya existe un usuario registrado con ese email' });
     }
 
-    User.findOne({ role: 'N'}).then((nutritionist) => { 
+    return User.findOne({ role: 'N' }).then((nutritionist) => { 
       // If email is unique and password was provided, we create new user
 
       const newUser = new User(req.body);
