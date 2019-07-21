@@ -181,9 +181,7 @@ apiRoutes.post('/purchases', passport.authenticate(), PurchaseController.create)
 app.use('/api', apiRoutes);
 
 app.use((req, res, next) => {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
+  throw new Error('404 Not Found');
 });
 
 // set up database
