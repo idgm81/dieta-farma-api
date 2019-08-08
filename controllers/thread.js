@@ -73,7 +73,16 @@ module.exports.modify = function(req, res) {
       $set: { unread: false } })
       .then(() => User.findById(author))
       .then((userFrom) => {
-        return User.findById(thread.customer).then((userTo) => {
+
+        if (userFrom.role === 'N') {
+          return User.findById(thread.customer).then((userTo) => {
+            MailController.sendMessageNotification(userFrom, userTo);
+  
+            return res.status(204).end();
+          })
+        }
+
+        return User.findById(thread.nutritionist).then((userTo) => {
           MailController.sendMessageNotification(userFrom, userTo);
 
           return res.status(204).end();
