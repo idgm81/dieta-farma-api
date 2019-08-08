@@ -39,8 +39,9 @@ module.exports.create = function(req, res, next) {
 };
 
 module.exports.get = function(req, res) {
-  User.findById(req.params.id, (err, user) => {
-    if (err) {
+  User.findById(req.params.id, (error, user) => {
+    if (error) {
+      console.log(error);
       return res.status(409).json({ error: 'No se ha podido recuperar los datos de este usuario' });
     }
 
@@ -51,8 +52,9 @@ module.exports.get = function(req, res) {
 module.exports.getAll = function(req, res) {
   const role = req.query.role;
 
-  User.find({ role }, (err, users) => {
-    if (err) {
+  User.find({ role }, (error, users) => {
+    if (error) {
+      console.log(error);
       return res.status(409).json({ error: 'No se ha podido recuperar la lista de usuarios' });
     }
 
@@ -63,8 +65,9 @@ module.exports.getAll = function(req, res) {
 module.exports.modify = function(req, res) {
   const user_data = req.body;
 
-  User.findByIdAndUpdate(req.params.id, { $set: user_data }, { new: true }, (err, user) => {
-    if (err || !user) {
+  User.findByIdAndUpdate(req.params.id, { $set: user_data }, { new: true }, (error, user) => {
+    if (error || !user) {
+      console.log(error);
       return res.status(409).json({ error: 'No se ha podido actualizar los datos de este usuario' });
     }
 
@@ -77,13 +80,15 @@ module.exports.modify = function(req, res) {
 };
 
 module.exports.delete = function(req, res) {
-  User.findById(req.params.id, (err, user) => {
-    if (err || !user) {
+  User.findById(req.params.id, (error, user) => {
+    if (error || !user) {
+      console.log(error);
       return res.status(409).json({ error: 'No se ha podido recuperar los datos de este usuario' });
     }
 
-    user.remove((err) => {
-      if (err) {
+    user.remove((error) => {
+      if (error) {
+        console.log(error);
         return res.status(500).json({ error: 'No se ha podido dar de baja este usuario' });
       }
 

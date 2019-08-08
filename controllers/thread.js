@@ -10,8 +10,9 @@ module.exports.get = function(req, res) {
     { $lookup: { from: 'users', localField: 'nutritionist', foreignField: '_id', as: 'nutritionist_data' } },
     { $match: { $or: [{ customer: mongoose.Types.ObjectId(req.query.userId) }, { nutritionist: mongoose.Types.ObjectId(req.query.userId) }] } },
     { $sort: { createdAt: -1 } }])
-    .exec((err, threads) => {
-      if (err) {
+    .exec((error, threads) => {
+      if (error) {
+        console.log(error);
         return res.status(409).json({ error: 'Error al recuperar los mensajes del usuario' });
       }
 
@@ -44,13 +45,16 @@ module.exports.create = function(req, res) {
         MailController.sendMessageNotification(userFrom, userTo);
 
         return res.status(204).json({ _id: thread._id });
-      }).catch(() => {
+      }).catch((error) => {
+        console.log(error);
         return res.status(409).json({ error: 'Error al guardar el mensaje' });
       });
-    }).catch(() => {
+    }).catch((error) => {
+      console.log(error);
       return res.status(409).json({ error: 'Usuario destinatario no encontrado' });
     });
-  }).catch(() => {
+  }).catch((error) => {
+    console.log(error);
     return res.status(409).json({ error: 'Usuario remitente no encontrado' });
   });
 };
@@ -79,13 +83,15 @@ module.exports.modify = function(req, res) {
 };
 
 module.exports.delete = function(req, res) {
-  Thread.findById(req.params.id, (err, user) => {
-    if (err || !user) {
+  Thread.findById(req.params.id, (error, user) => {
+    if (error || !user) {
+      console.log(error);
       return res.status(409).json({ error: 'Conversación no encontrada' });
     }
 
-    user.remove((err) => {
-      if (err) {
+    user.remove((error) => {
+      if (error) {
+        console.log(error);
         return res.status(409).json({ error: 'Error al borrar la conversación'});
       }
 

@@ -94,9 +94,10 @@ module.exports.checkEmail = function(req, res, next) {
       user.resetPasswordToken = resetToken;
       user.resetPasswordExpires = Date.now() + 60 * 15 * 1000 // 15 minutes
 
-      user.save((err) => {
+      user.save((error) => {
         // If error in saving token, return it
-        if (err) {
+        if (error) {
+          console.log(error);
           return res.status(500).json({ error: 'No se pudo resetear la contraseña' });
         }
 
@@ -122,8 +123,9 @@ module.exports.modifyPassword = function(req, res) {
     resetUser.resetPasswordToken = undefined;
     resetUser.resetPasswordExpires = undefined;
 
-    resetUser.save((err) => {
-      if (err) {
+    resetUser.save((error) => {
+      if (error) {
+        console.log(error);
         return res.status(500).json({ error: 'No se ha podido modificar la contraseña' });
       }
 

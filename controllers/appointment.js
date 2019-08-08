@@ -9,8 +9,9 @@ module.exports.get = function(req, res) {
     { $lookup: { from: 'users', localField: 'customer', foreignField: '_id', as: 'customer_data' } },
     { $match: { $or: [{ customer: mongoose.Types.ObjectId(req.query.userId) }, { nutritionist: mongoose.Types.ObjectId(req.query.userId) }] } },
     { $sort: { date: 1 } }])
-    .exec((err, appointments) => {
-      if (err) {
+    .exec((error, appointments) => {
+      if (error) {
+        console.log(error);
         return res.status(409).json({ error: 'Error al buscar las citas del suario'});
       }
 
@@ -19,13 +20,15 @@ module.exports.get = function(req, res) {
 };
 
 module.exports.getCalendar = function(req, res) {
-  User.findById(req.query.userId, (err, user) => {
-    if (err || !user) {
+  User.findById(req.query.userId, (error, user) => {
+    if (error || !user) {
+      console.log(error);
       return res.status(409).json({ error: 'Error al buscar las citas del usuario'});
     }
 
-    Appointment.find({ nutritionist: mongoose.Types.ObjectId(user.nutritionist) }, (err, nutritionistDates) => {
-      if (err) {
+    Appointment.find({ nutritionist: mongoose.Types.ObjectId(user.nutritionist) }, (error, nutritionistDates) => {
+      if (error) {
+        console.log(error);
         return res.status(409).json({ error: 'Error al buscar el calendario del nutricionista'});
       }
 
@@ -89,8 +92,9 @@ module.exports.getCalendar = function(req, res) {
 };
 
 module.exports.create = function(req, res) {
-  User.findById(req.body.customer, (err, user) => {
-    if (err || !user) {
+  User.findById(req.body.customer, (error, user) => {
+    if (error || !user) {
+      console.log(error);
       return res.status(409).json({ error: 'Error al buscar el cliente de la cita' });
     }
 
@@ -113,13 +117,17 @@ module.exports.create = function(req, res) {
       MailController.sendAppointmentNotification('jorgebaztan@dietafarma.es', 'Jorge', body);
 
       return res.status(200).json({ appointment });
-    }).catch(() => res.status(409).json({ error: 'Error al reservar la cita' }));
+    }).catch((error) => {
+      console.log(error);
+      return res.status(409).json({ error: 'Error al reservar la cita' });
+    });
   });
 };
 
 module.exports.modify = function(req, res) {
-  Appointment.findByIdAndUpdate(req.params.id, req.body, (err, appointment) => {
-    if (err) {
+  Appointment.findByIdAndUpdate(req.params.id, req.body, (error, appointment) => {
+    if (error) {
+      console.log(error);
       return res.status(409).json({ error: 'Error al modificar la cita' });
     }
 
@@ -128,28 +136,30 @@ module.exports.modify = function(req, res) {
 };
 
 module.exports.delete = function(req, res) {
-  Appointment.findById(req.params.id, (err, appointment) => {
-    if (err || !appointment) {
+  Appointment.findById(req.params.id, (error, appointment) => {
+    if (error || !appointment) {
+      console.log(error);
       return res.status(409).json({ error: 'Error al borrar la cita' });
     }
 
-    appointment.remove((err) => {
-      if (err) {
+    appointment.remove((error) => {
+      if (error) {
+        console.log(error);
         return res.status(409).json({ error: 'Error al borrar la cita' });
       }
 
-      if (Boolean(req.query.updateCredits)) {
+      if (req.query.updateCredits) {
         const credits = appointment.type === 'P' ? 3 : 2;
 
-        return User.findByIdAndUpdate(appointment.customer, { $inc: { 'profile.credits' : credits }}, (err, user) => {
-          if (err) {
+        return User.findByIdAndUpdate(appointment.customer, { $inc: { 'profile.credits' : credits }}, (error, user) => {
+          if (error) {
+            console.log(error);
             return res.status(409).json({ error: 'Error al buscar el cliente de la cita' });
           }
 
-          const body = `La cita ${appointment.type === 'P' ? 'presencial' : 'por videollamada skype'} del próximo ${moment(appointment.date).utc().format('DD/MM/YYYY [a las] HH:mm')} ha sido cancelada`;
+          const message = `La cita ${appointment.type === 'P' ? 'presencial' : 'por videollamada skype'} del próximo ${moment(appointment.date).utc().format('DD/MM/YYYY [a las] HH:mm')} ha sido cancelada`;
 
-          MailController.sendCancelAppointmentNotification(user.email, user.profile.name, body);
-          MailController.sendCancelAppointmentNotification('jorgebaztan@dietafarma.es', 'Jorge', body);
+          MailController.sendCancelAppointmentNotification(user, message);
 
           return res.status(204).end();
         });
