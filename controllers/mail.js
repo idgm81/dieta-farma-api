@@ -357,6 +357,7 @@ module.exports.sendMessageNotification = function(from, to) {
   const mailOptions = {
     to: to.email,
     from: from.email,
+    cc: 'joseotamendi@gmail.com',
     subject: 'DietaFarma Online: Tienes un nuevo mensaje',
     template: 'email',
     context: {
