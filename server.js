@@ -11,7 +11,6 @@ const logger                    = require('morgan');
 const errorhandler              = require('errorhandler');
 const bodyParser                = require('body-parser');
 const methodOverride            = require('method-override');
-const cors                      = require('cors');
 const cookieParser              = require('cookie-parser');
 const path                      = require('path');
 const Promise                   = require('bluebird');
@@ -35,16 +34,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(methodOverride());
 app.use(express.static(path.join(__dirname,'public')));
 app.use(swStats.getMiddleware({}));
-
-// enable cors
-const corsOption = {
-  origin: ['*'],
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  preflightContinue: true,
-  optionsSuccessStatus: 200
-};
-
-app.use(cors(corsOption));
 
 if (process.env.NODE_ENV === 'development') {
   app.use(logger('dev'));
