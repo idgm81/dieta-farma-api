@@ -38,9 +38,7 @@ app.use(swStats.getMiddleware({}));
 
 // enable cors
 const corsOption = {
-  origin: [
-    '*'
-  ],
+  origin: '*',
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   preflightContinue: true,
   optionsSuccessStatus: 200
