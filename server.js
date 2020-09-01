@@ -182,12 +182,12 @@ app.use((req, res, next) => {
 // set up database
 
 mongoose.Promise = Promise;
-mongoose.connect(process.env.MONGOLAB_URI, { useNewUrlParser: true }); // connect to our database
+mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true }); // connect to our database
 mongoose.connection.on('error', () => {
-  throw new Error(`unable to connect to database: ${process.env.MONGOLAB_URI}`);
+  throw new Error(`unable to connect to database: ${process.env.MONGODB_URI}`);
 });
 mongoose.connection.on('connected', () => {
-  console.log(`Connected to database: ${process.env.MONGOLAB_URI}`);
+  console.log(`Connected to database: ${process.env.MONGODB_URI}`);
 });
 
 // START THE SERVER
