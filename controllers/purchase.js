@@ -4,7 +4,7 @@ const stripe            = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 const generate_payment_response = (intent) => {
   if (
-    ['requires_source_action', 'requires__action'].includes(intent.status) &&
+    ['requires_source_action', 'requires_action'].includes(intent.status) &&
     intent.next_action.type === 'use_stripe_sdk'
   ) {
     return {
